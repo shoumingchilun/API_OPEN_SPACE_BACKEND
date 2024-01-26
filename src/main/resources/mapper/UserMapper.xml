@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chilun.apiopenspace.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.chilun.apiopenspace.model.entity.User">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="username" column="username" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+            <result property="userNickname" column="user_nickname" jdbcType="VARCHAR"/>
+            <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+            <result property="role" column="role" jdbcType="TINYINT"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="totalBalance" column="total_balance" jdbcType="DECIMAL"/>
+            <result property="unusedBalance" column="unused_balance" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,password,
+        user_nickname,introduction,role,
+        status,total_balance,unused_balance,
+        create_time,update_time
+    </sql>
+</mapper>
