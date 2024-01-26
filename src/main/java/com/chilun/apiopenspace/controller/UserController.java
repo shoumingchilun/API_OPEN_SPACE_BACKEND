@@ -83,8 +83,8 @@ public class UserController {
     //废除账号
     @PostMapping("/abolish")
     public BaseResponse<Void> userAbolish(HttpServletRequest request) {
-        //一、实参检验，获得脱敏对象
-        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR, "废除账号请求为空");
+        //一、请求检验，获得脱敏对象
+        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR, "请求为空");
         UserMasked userMasked = (UserMasked) request.getSession().getAttribute(SessionKey.USER_IN_SESSION_KEY);
         ThrowUtils.throwIf(userMasked == null, ErrorCode.NOT_LOGIN_ERROR, "用户未登录，废除失败，请重新登陆");
         //二、废除账号
@@ -92,6 +92,52 @@ public class UserController {
         ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR, "删除账号失败");
         //三、返回结果
         return ResultUtils.success(null);
+    }
+
+    //更改账号信息
+    @PostMapping("/update")
+    public BaseResponse<UserMasked> updateSelf(@RequestBody @Valid UserSelfUpdateRequest updateRequest, HttpServletRequest request) {
+        //一、数据校验
+        //1DTO对象不为空——@RequestBody注解要求不为空
+        //2DTO对象参数长度校验——@Valid接口实现
+        //3DTO对象参数不全为空校验
+        ThrowUtils.throwIf(StringUtils.isEmpty(updateRequest.getIntroduction())
+                        && StringUtils.isEmpty(updateRequest.getUserNickname())
+                        && StringUtils.isEmpty(updateRequest.getPassword()),
+                ErrorCode.PARAMS_ERROR,
+                "无有效更改参数！");
+        //4请求对象是否为空
+        ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR, "请求为空");
+
+        //二、获得当前账号（脱敏）
+        UserMasked userMasked = (UserMasked) request.getSession().getAttribute(SessionKey.USER_IN_SESSION_KEY);
+        ThrowUtils.throwIf(userMasked == null, ErrorCode.NOT_LOGIN_ERROR, "用户未登录，修改失败，请重新登陆");
+
+        //三、获得更新参数User
+        User user = new User();
+        user.setId(userMasked.getId());
+        if (StringUtils.isNotEmpty(updateRequest.getPassword())){
+            user.setPassword(userService.passwordDigest(updateRequest.getPassword()));
+        }
+        if (StringUtils.isNotEmpty(updateRequest.getUserNickname()))
+            user.setUserNickname(updateRequest.getUserNickname());
+        if (StringUtils.isNotEmpty(updateRequest.getIntroduction()))
+            user.setIntroduction(updateRequest.getIntroduction());
+
+        //四、更新数据库内用户
+        boolean b = userService.updateById(user);
+        ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR, "更新失败");
+
+        //五、获得数据库内用户，脱敏
+        User byId = userService.getById(user.getId());
+        UserMasked newUserMasked = userService.getUserMasked(byId);
+
+        //六、更新session内用户
+        request.getSession().removeAttribute(SessionKey.USER_IN_SESSION_KEY);
+        request.getSession().setAttribute(SessionKey.USER_IN_SESSION_KEY, newUserMasked);
+
+        //七、返回脱敏用户
+        return ResultUtils.success(newUserMasked);
     }
 
     //管理员添加账号
@@ -217,4 +263,5 @@ public class UserController {
         //四、返回结果
         return ResultUtils.success(page);
     }
+
 }
