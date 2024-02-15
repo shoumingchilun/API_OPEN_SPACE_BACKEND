@@ -101,11 +101,8 @@ public class UserController {
         //1DTO对象不为空——@RequestBody注解要求不为空
         //2DTO对象参数长度校验——@Valid接口实现
         //3DTO对象参数不全为空校验
-        ThrowUtils.throwIf(StringUtils.isEmpty(updateRequest.getIntroduction())
-                        && StringUtils.isEmpty(updateRequest.getUserNickname())
-                        && StringUtils.isEmpty(updateRequest.getPassword()),
-                ErrorCode.PARAMS_ERROR,
-                "无有效更改参数！");
+        ThrowUtils.throwIf(StringUtils.isAllEmpty(updateRequest.getIntroduction(), updateRequest.getUserNickname(), updateRequest.getPassword()),
+                ErrorCode.PARAMS_ERROR, "无有效更改参数！");
         //4请求对象是否为空
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR, "请求为空");
 
@@ -116,7 +113,7 @@ public class UserController {
         //三、获得更新参数User
         User user = new User();
         user.setId(userMasked.getId());
-        if (StringUtils.isNotEmpty(updateRequest.getPassword())){
+        if (StringUtils.isNotEmpty(updateRequest.getPassword())) {
             user.setPassword(userService.passwordDigest(updateRequest.getPassword()));
         }
         if (StringUtils.isNotEmpty(updateRequest.getUserNickname()))
@@ -143,7 +140,7 @@ public class UserController {
     //管理员添加账号
     @PostMapping("/admin/add")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<UserMasked> addUser(@RequestBody @Valid UserAddRequest addRequest) {
+    public BaseResponse<User> addUser(@RequestBody @Valid UserAddRequest addRequest) {
         //一、数据校验（已省略，通过Java Bean Validation实现）
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在
@@ -166,7 +163,7 @@ public class UserController {
         ThrowUtils.throwIf(!saved, ErrorCode.SYSTEM_ERROR, "添加失败");
 
         //三、返回脱敏后的添加结果
-        return ResultUtils.success(userService.getUserMasked(user));
+        return ResultUtils.success(user);
     }
 
     //管理员删除账号
@@ -188,7 +185,7 @@ public class UserController {
     //管理员更新账号
     @PostMapping("/admin/update")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<UserMasked> updateUser(@RequestBody @Valid UserUpdateRequest updateRequest) {
+    public BaseResponse<User> updateUser(@RequestBody @Valid UserUpdateRequest updateRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在——@Valid注解要求不为空
@@ -208,8 +205,7 @@ public class UserController {
         ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR, "更新失败");
 
         //三、返回结果
-        UserMasked userMasked = userService.getUserMasked(userService.getById(user.getId()));
-        return ResultUtils.success(userMasked);
+        return ResultUtils.success(userService.getById(user.getId()));
     }
 
     //管理员查询\筛选账号：ByID、ByUsername
@@ -250,12 +246,13 @@ public class UserController {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.like(StringUtils.isNotBlank(queryRequest.getUserNickname()), "user_nickname", queryRequest.getUserNickname());
         wrapper.like(StringUtils.isNotBlank(queryRequest.getIntroduction()), "introduction", queryRequest.getIntroduction());
-        if (queryRequest.getRole() != null)
+        if (queryRequest.getRole() != null && queryRequest.getRole().length != 0)
             wrapper.in("role", List.of(queryRequest.getRole()));
-        if (queryRequest.getStatus() != null)
+        if (queryRequest.getStatus() != null && queryRequest.getStatus().length != 0)
             wrapper.in("status", List.of(queryRequest.getStatus()));
         wrapper.le(queryRequest.getHighTotalBalance() != null, "total_balance", queryRequest.getHighTotalBalance());
         wrapper.ge(queryRequest.getLowTotalBalance() != null, "total_balance", queryRequest.getLowTotalBalance());
+        wrapper.orderBy(queryRequest.getSortField() != null, "ascend".equals(queryRequest.getSortOrder()), queryRequest.getSortField());
 
         //三、进行筛选
         Page<User> page = userService.page(new Page<>(current, pageSize), wrapper);
@@ -263,5 +260,4 @@ public class UserController {
         //四、返回结果
         return ResultUtils.success(page);
     }
-
 }

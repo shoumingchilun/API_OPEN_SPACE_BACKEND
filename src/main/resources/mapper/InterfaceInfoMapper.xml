@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chilun.apiopenspace.mapper.InterfaceInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.chilun.apiopenspace.model.entity.InterfaceInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <id property="userid" column="userid" jdbcType="BIGINT"/>
+            <result property="requestPath" column="request_path" jdbcType="VARCHAR"/>
+            <result property="requestMethod" column="request_method" jdbcType="TINYINT"/>
+            <result property="requestDataType" column="request_data_type" jdbcType="VARCHAR"/>
+            <result property="requestParameters" column="request_parameters" jdbcType="VARCHAR"/>
+            <result property="requestExample" column="request_example" jdbcType="VARCHAR"/>
+            <result property="responseStatus" column="response_status" jdbcType="VARCHAR"/>
+            <result property="responseParameters" column="response_parameters" jdbcType="VARCHAR"/>
+            <result property="responseExample" column="response_example" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
+            <result property="isCost" column="is_cost" jdbcType="TINYINT"/>
+            <result property="isRestrict" column="is_restrict" jdbcType="TINYINT"/>
+            <result property="isExceptionHandling" column="is_exception_handling" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,request_path,request_method,
+        request_data_type,request_parameters,request_example,
+        response_status,response_parameters,response_example,
+        status,introduction,is_cost,
+        is_restrict,is_exception_handling,create_time,
+        update_time,is_deleted
+    </sql>
+</mapper>

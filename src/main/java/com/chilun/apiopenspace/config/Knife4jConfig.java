@@ -23,7 +23,7 @@ public class Knife4jConfig {
     public Docket defaultApi2() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(new ApiInfoBuilder()
-                        .title("API开放平台接口文件")
+                        .title("API开放平台后端接口文件")
                         .description("API开放平台")
                         .contact(new Contact("chilun", "http://home.shoumingchilun.cn", "2265501251@qq.com"))
                         .version("1.0")

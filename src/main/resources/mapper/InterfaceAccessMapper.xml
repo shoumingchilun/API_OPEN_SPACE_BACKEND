@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chilun.apiopenspace.mapper.InterfaceAccessMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.InterfaceAccess">
+            <id property="accesskey" column="accesskey" jdbcType="VARCHAR"/>
+            <result property="verifyType" column="verify_type" jdbcType="TINYINT"/>
+            <result property="secretkey" column="secretkey" jdbcType="VARCHAR"/>
+            <result property="remainingAmount" column="remaining_amount" jdbcType="DECIMAL"/>
+            <result property="remainingTimes" column="remaining_times" jdbcType="INTEGER"/>
+            <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
+            <result property="userid" column="userid" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        accesskey,verify_type,secretkey,
+        remaining_amount,remaining_times,interface_id,
+        userid,create_time,update_time,
+        is_deleted
+    </sql>
+</mapper>
