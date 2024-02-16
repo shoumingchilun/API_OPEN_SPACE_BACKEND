@@ -279,7 +279,7 @@ public class InterfaceAccessController {
 
     @GetMapping("/gateway/query/{accesskey}")
     @GatewayIPCheck
-    public BaseResponse<String> getCryptographicInterfaceAccess(@PathVariable String accesskey) throws Exception {
+    public BaseResponse<String> getCryptographicInterfaceAccess(@PathVariable("accesskey") String accesskey) throws Exception {
         //一、数据校验
         //1DTO对象是否为空——@PathVariable注解要求不为空
 
