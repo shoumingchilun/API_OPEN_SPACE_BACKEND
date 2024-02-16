@@ -258,7 +258,7 @@ public class InterfaceInfoController {
         return ResultUtils.success(null);
     }
 
-    //管理员更新账号
+    //管理员更新接口
     @PostMapping("/admin/update")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
     public BaseResponse<InterfaceInfo> adminUpdateInterface(@RequestBody @Valid InterfaceUpdateRequest updateRequest) {
