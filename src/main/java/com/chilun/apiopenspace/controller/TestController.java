@@ -35,7 +35,7 @@ public class TestController {
 
     @GetMapping("/test1")
     public String test1() {
-        return "hello API_OPEN_SPACE";
+        return "hello API_OPEN_SPACE！！！";
     }
 
     @GetMapping("/test2")

@@ -16,7 +16,9 @@ import com.chilun.apiopenspace.model.dto.DeleteRequest;
 import com.chilun.apiopenspace.model.dto.InterfaceInfo.*;
 import com.chilun.apiopenspace.model.dto.PageRequest;
 import com.chilun.apiopenspace.model.entity.InterfaceInfo;
+import com.chilun.apiopenspace.model.entity.User;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
+import com.chilun.apiopenspace.service.UserService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -39,16 +41,20 @@ public class InterfaceInfoController {
     @Resource(name = "InterfaceInfo&RouteService")
     InterfaceInfoService interfaceInfoService;
 
+    @Resource
+    UserService userService;
+
 
     //注册接口
     @PostMapping("/register")
-    public BaseResponse<Long> interfaceRegister(@RequestBody @Valid InterfaceRegisterRequest registerRequest) {
+    public BaseResponse<Long> interfaceRegister(@RequestBody @Valid InterfaceRegisterRequest registerRequest,HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
 
         //二、进行注册
-        long l = interfaceInfoService.InterfaceRegister(registerRequest.getUserid(), registerRequest.getRequestPath(), registerRequest.getRequestMethod());
+        User loggedInUser = userService.getLoggedInUser(request);
+        long l = interfaceInfoService.InterfaceRegister(loggedInUser.getId(), registerRequest.getRequestPath(), registerRequest.getRequestMethod());
 
         //三、返回注册结果
         return ResultUtils.success(l);
@@ -144,14 +150,13 @@ public class InterfaceInfoController {
 
         //三、进行修改
         //1获得新接口对象
-        InterfaceInfo newInterfaceInfo = new InterfaceInfo();
-        BeanUtils.copyProperties(updateRequest, newInterfaceInfo);
+        BeanUtils.copyProperties(updateRequest, pendingInterface);
         //2进行更新
-        boolean update = interfaceInfoService.updateById(newInterfaceInfo);
+        boolean update = interfaceInfoService.updateById(pendingInterface);
         ThrowUtils.throwIf(!update, ErrorCode.SYSTEM_ERROR, "更新失败");
 
         //四、返回修改后脱敏结果
-        InterfaceInfo byId = interfaceInfoService.getById(newInterfaceInfo.getId());
+        InterfaceInfo byId = interfaceInfoService.getById(pendingInterface.getId());
         return ResultUtils.success(interfaceInfoService.getInterfaceInfoMasked(byId));
     }
 

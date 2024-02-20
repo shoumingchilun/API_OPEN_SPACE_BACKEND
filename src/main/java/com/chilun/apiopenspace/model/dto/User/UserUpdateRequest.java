@@ -22,7 +22,7 @@ public class UserUpdateRequest {
     @Length(min = 8, max = 30)
     private String password;
 
-    @Length(min = 0, max = 16)
+    @Length(min = 1, max = 16)
     private String userNickname;
 
     @Length(max = 1000)

@@ -13,8 +13,6 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class InterfaceRegisterRequest {
-    @NotNull
-    private Long userid;
 
     @NotNull
     @Length(max = 200,min = 1)

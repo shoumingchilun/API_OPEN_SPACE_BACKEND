@@ -41,6 +41,13 @@ public class DecoratedInterfaceInfoService extends ServiceImpl<InterfaceInfoMapp
     }
 
     @Override
+    public boolean updateById(InterfaceInfo entity) {
+        boolean update = baseService.updateById(entity);
+        this.saveOrUpdateRoute(entity.getId(), entity.getRequestPath());
+        return update;
+    }
+
+    @Override
     public InterfaceInfo statusManage(Long id, Integer status) {
         return baseService.statusManage(id, status);
     }
