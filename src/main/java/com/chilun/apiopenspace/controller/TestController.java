@@ -25,21 +25,15 @@ import java.util.List;
 @RequestMapping("/test")
 public class TestController {
     @Resource
-    UserService userService;
-
-    @Resource
     FeignRouteService routeService;
 
-    @Resource(name = "InterfaceInfo&RouteService")
-    InterfaceInfoService interfaceInfoService;
-
-    @GetMapping("/test1")
-    public String test1() {
+    @GetMapping("/base")
+    public String testBase() {
         return "hello API_OPEN_SPACE！！！";
     }
 
-    @GetMapping("/test2")
-    public String test2() {
+    @GetMapping("/route")
+    public String testRoute() {
         SaveOrUpdateRouteRequest saveOrUpdateRouteRequest = new SaveOrUpdateRouteRequest();
         saveOrUpdateRouteRequest.setId("1");
         saveOrUpdateRouteRequest.setUri("https://www.baidu.com");
@@ -61,17 +55,17 @@ public class TestController {
 
         return routeService.getAll().toString();
     }
-
-    @GetMapping("/user/register")
-    public String register(@RequestParam("account") String username,
-                           @RequestParam("password") String password,
-                           @RequestParam("checkedPassword") String checkedPassword) {
-        return String.valueOf(userService.userRegister(username, password, checkedPassword));
-    }
-
-    @GetMapping("/interface/get")
-    public String getInterFace() {
-        List<InterfaceInfo> interfaceInfos = interfaceInfoService.getBaseMapper().selectList(new QueryWrapper<>());
-        return interfaceInfos.toString();
-    }
+//
+//    @GetMapping("/user/register")
+//    public String register(@RequestParam("account") String username,
+//                           @RequestParam("password") String password,
+//                           @RequestParam("checkedPassword") String checkedPassword) {
+//        return String.valueOf(userService.userRegister(username, password, checkedPassword));
+//    }
+//
+//    @GetMapping("/interface/get")
+//    public String getInterFace() {
+//        List<InterfaceInfo> interfaceInfos = interfaceInfoService.getBaseMapper().selectList(new QueryWrapper<>());
+//        return interfaceInfos.toString();
+//    }
 }

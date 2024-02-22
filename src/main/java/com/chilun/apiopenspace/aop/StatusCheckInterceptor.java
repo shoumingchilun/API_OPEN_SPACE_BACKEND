@@ -40,11 +40,18 @@ public class StatusCheckInterceptor {
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 2获得当前登录用户状态
         User loginUser = userService.getLoggedInUser(request);
-        ThrowUtils.throwIf(loginUser==null, ErrorCode.NOT_LOGIN_ERROR,"未登录！");
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR, "未登录！");
         Integer status = loginUser.getStatus();
-        ThrowUtils.throwIf(status==null,ErrorCode.NOT_LOGIN_ERROR,"获得用户状态失败");
+        ThrowUtils.throwIf(status == null, ErrorCode.NOT_LOGIN_ERROR, "获得用户状态失败");
         //三、进行鉴权
-        ThrowUtils.throwIf(Arrays.asList(mustStatus).contains(status), ErrorCode.NO_AUTH_ERROR,"异常状态禁止操作！");
+        boolean contains = false;
+        for (int i : mustStatus) {
+            if (i == status) {
+                contains = true;
+                break;
+            }
+        }
+        ThrowUtils.throwIf(!contains, ErrorCode.NO_AUTH_ERROR, "异常状态禁止操作！");
         // 四、通过状态校验，放行
         return joinPoint.proceed();
     }

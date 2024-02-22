@@ -290,15 +290,14 @@ public class InterfaceInfoController {
         ThrowUtils.throwIf(pendingInterface == null, ErrorCode.PARAMS_ERROR, "接口不存在！");
 
         //三、进行修改
-        //1获得新接口对象
-        InterfaceInfo newInterfaceInfo = new InterfaceInfo();
-        BeanUtils.copyProperties(updateRequest, newInterfaceInfo);
+        //1对需要修改的属性进行填充
+        BeanUtils.copyProperties(updateRequest, pendingInterface);
         //2进行更新
-        boolean update = interfaceInfoService.updateById(newInterfaceInfo);
+        boolean update = interfaceInfoService.updateById(pendingInterface);
         ThrowUtils.throwIf(!update, ErrorCode.SYSTEM_ERROR, "更新失败");
 
         //四、返回修改后结果
-        return ResultUtils.success(interfaceInfoService.getById(newInterfaceInfo.getId()));
+        return ResultUtils.success(interfaceInfoService.getById(pendingInterface.getId()));
     }
 
     //管理员查询\筛选接口：ByID

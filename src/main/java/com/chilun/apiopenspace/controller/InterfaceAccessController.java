@@ -98,8 +98,8 @@ public class InterfaceAccessController {
 
     //切换验证方式（强校验/弱校验）
     @PostMapping("/changeVerify")
-    public BaseResponse<InterfaceAccessMasked> statusManage(@RequestBody @Valid ChangeVerifyRequest changeRequest,
-                                                            HttpServletRequest request) {
+    public BaseResponse<InterfaceAccessMasked> changeVerifyType(@RequestBody @Valid ChangeVerifyRequest changeRequest,
+                                                                HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -218,17 +218,15 @@ public class InterfaceAccessController {
                         updateRequest.getRemainingTimes())
                 , ErrorCode.PARAMS_ERROR, "无可更改参数");
         //4校验用户id/接口id/Accesskey参数是否合理（存在）
-        ThrowUtils.throwIf(
-                interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", updateRequest.getAccesskey())) == null,
-                ErrorCode.PARAMS_ERROR, "接口申请不存在！");
+        InterfaceAccess newInterfaceInfo = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", updateRequest.getAccesskey()));
+        ThrowUtils.throwIf(newInterfaceInfo == null, ErrorCode.PARAMS_ERROR, "接口申请不存在！");
         ThrowUtils.throwIf(updateRequest.getUserid() != null && userService.getById(updateRequest.getUserid()) == null,
                 ErrorCode.PARAMS_ERROR, "所选择用户不存在！");
         ThrowUtils.throwIf(updateRequest.getInterfaceId() != null && interfaceInfoService.getById(updateRequest.getInterfaceId()) == null,
                 ErrorCode.PARAMS_ERROR, "所选择接口不存在！");
 
         //二、进行修改
-        //1获得新接口申请对象
-        InterfaceAccess newInterfaceInfo = new InterfaceAccess();
+        //1对需要修改的属性进行填充
         BeanUtils.copyProperties(updateRequest, newInterfaceInfo);
         //2进行更新
         boolean update = interfaceAccessService.update(newInterfaceInfo, new QueryWrapper<InterfaceAccess>().eq("accesskey", updateRequest.getAccesskey()));

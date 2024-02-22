@@ -2,6 +2,7 @@ package com.chilun.apiopenspace.model.dto.Route;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -10,5 +11,6 @@ import java.util.List;
  */
 @Data
 public class InitRouteRequest {
+    @NotNull
     List<SaveOrUpdateRouteRequest> list;
 }

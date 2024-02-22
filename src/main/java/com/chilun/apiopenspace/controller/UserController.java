@@ -37,14 +37,11 @@ public class UserController {
 
     //注册
     @PostMapping("/register")
-    public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest registerRequest) {
+    public BaseResponse<Long> userRegister(@RequestBody @Valid UserRegisterRequest registerRequest) {
         //一、数据校验
-        //1DTO对象是否为空
-        ThrowUtils.throwIf(registerRequest == null, ErrorCode.PARAMS_ERROR, "注册请求为空");
-        //2DTO参数是否异常
-        ThrowUtils.throwIf(StringUtils.isAnyBlank(registerRequest.getUserAccount(), registerRequest.getUserPassword(), registerRequest.getCheckPassword()),
-                ErrorCode.PARAMS_ERROR,
-                "注册请求参数为空");
+        //1DTO对象是否为空——@RequestBody实现不为空
+        //2DTO参数是否异常——@Valid实现不为空、长度校验
+
         //二、进行注册
         long registerRet = userService.userRegister(registerRequest.getUserAccount(), registerRequest.getUserPassword(), registerRequest.getCheckPassword());
         //三、返回注册结果
@@ -53,16 +50,11 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public BaseResponse<UserMasked> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<UserMasked> userLogin(@RequestBody @Valid UserLoginRequest userLoginRequest, HttpServletRequest request) {
         //一、数据校验
-        //1DTO对象是否为空
-        ThrowUtils.throwIf(userLoginRequest == null || request == null,
-                ErrorCode.PARAMS_ERROR,
-                "登录请求为空");
-        //2DTO参数是否异常
-        ThrowUtils.throwIf(StringUtils.isAnyBlank(userLoginRequest.getUserAccount(), userLoginRequest.getUserPassword()),
-                ErrorCode.PARAMS_ERROR,
-                "登录请求参数为空");
+        //1DTO对象是否为空——@RequestBody实现不为空
+        //2DTO参数是否异常——@Valid实现不为空
+
         //二、进行登录
         UserMasked userMasked = userService.userLogin(userLoginRequest.getUserAccount(), userLoginRequest.getUserPassword(), request);
         //三、返回登录结果
@@ -194,11 +186,11 @@ public class UserController {
 
         //二、修改用户
         //1查看用户是否存在
-        ThrowUtils.throwIf(userService.getBaseMapper().selectById(updateRequest.getId()) == null,
+        User user = userService.getBaseMapper().selectById(updateRequest.getId());
+        ThrowUtils.throwIf(user == null,
                 ErrorCode.PARAMS_ERROR,
                 "用户不存在");
         //2获得修改后用户
-        User user = new User();
         BeanUtils.copyProperties(updateRequest, user);
         //3更新用户
         boolean b = userService.updateById(user);

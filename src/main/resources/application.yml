@@ -21,3 +21,8 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
 cryptographic:
   AESKey: hello
+logging:
+  level:
+    root: info
+#  file:
+#    name: space.log
