@@ -17,6 +17,8 @@ public class InterfaceAccessMasked {
     private Integer remainingTimes;
     private Long interfaceId;
     private Long userid;
+    private Integer callTimes;
+    private Integer failedCallTimes;
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -36,7 +38,9 @@ public class InterfaceAccessMasked {
                 && (this.getRemainingAmount() == null ? other.getRemainingAmount() == null : this.getRemainingAmount().equals(other.getRemainingAmount()))
                 && (this.getRemainingTimes() == null ? other.getRemainingTimes() == null : this.getRemainingTimes().equals(other.getRemainingTimes()))
                 && (this.getInterfaceId() == null ? other.getInterfaceId() == null : this.getInterfaceId().equals(other.getInterfaceId()))
-                && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()));
+                && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
+                && (this.getCallTimes() == null ? other.getCallTimes() == null : this.getCallTimes().equals(other.getCallTimes()))
+                && (this.getFailedCallTimes() == null ? other.getFailedCallTimes() == null : this.getFailedCallTimes().equals(other.getFailedCallTimes()));
     }
 
     @Override
@@ -49,6 +53,8 @@ public class InterfaceAccessMasked {
         result = prime * result + ((getRemainingTimes() == null) ? 0 : getRemainingTimes().hashCode());
         result = prime * result + ((getInterfaceId() == null) ? 0 : getInterfaceId().hashCode());
         result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
+        result = prime * result + ((getCallTimes() == null) ? 0 : getCallTimes().hashCode());
+        result = prime * result + ((getFailedCallTimes() == null) ? 0 : getFailedCallTimes().hashCode());
         return result;
     }
 
@@ -65,6 +71,8 @@ public class InterfaceAccessMasked {
         sb.append(", interfaceId=").append(interfaceId);
         sb.append(", userid=").append(userid);
         sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append(", callTimes=").append(callTimes);
+        sb.append(", failedCallTimes=").append(failedCallTimes);
         sb.append("]");
         return sb.toString();
     }

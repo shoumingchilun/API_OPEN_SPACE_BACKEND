@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chilun.apiopenspace.mapper.ExceptionRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.chilun.apiopenspace.model.entity.ExceptionRecord">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="accesskey" column="accesskey" jdbcType="VARCHAR"/>
+            <result property="userid" column="userid" jdbcType="BIGINT"/>
+            <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
+            <result property="errorReason" column="error_reason" jdbcType="VARCHAR"/>
+            <result property="errorResponse" column="error_response" jdbcType="VARCHAR"/>
+            <result property="errorRequest" column="error_request" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,accesskey,userid,
+        interface_id,error_reason,error_response,
+        error_request,create_time,update_time,
+        is_deleted
+    </sql>
+</mapper>

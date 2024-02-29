@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  API_SPACE_REDIS:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - API_SPACE_NETWORK
+    volumes:
+      - "/data"
+
+volumes:
+  API_SPACE_VOLUME:
+
+networks:
+  API_SPACE_NETWORK:
+    driver: bridge

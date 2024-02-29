@@ -53,6 +53,16 @@ public class InterfaceAccess implements Serializable {
     private Long userid;
 
     /**
+     * 总调用次数
+     */
+    private Integer callTimes;
+
+    /**
+     * 失败调用次数
+     */
+    private Integer failedCallTimes;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -89,6 +99,8 @@ public class InterfaceAccess implements Serializable {
             && (this.getRemainingTimes() == null ? other.getRemainingTimes() == null : this.getRemainingTimes().equals(other.getRemainingTimes()))
             && (this.getInterfaceId() == null ? other.getInterfaceId() == null : this.getInterfaceId().equals(other.getInterfaceId()))
             && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
+            && (this.getCallTimes() == null ? other.getCallTimes() == null : this.getCallTimes().equals(other.getCallTimes()))
+            && (this.getFailedCallTimes() == null ? other.getFailedCallTimes() == null : this.getFailedCallTimes().equals(other.getFailedCallTimes()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getIsDeleted() == null ? other.getIsDeleted() == null : this.getIsDeleted().equals(other.getIsDeleted()));
@@ -105,6 +117,8 @@ public class InterfaceAccess implements Serializable {
         result = prime * result + ((getRemainingTimes() == null) ? 0 : getRemainingTimes().hashCode());
         result = prime * result + ((getInterfaceId() == null) ? 0 : getInterfaceId().hashCode());
         result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
+        result = prime * result + ((getCallTimes() == null) ? 0 : getCallTimes().hashCode());
+        result = prime * result + ((getFailedCallTimes() == null) ? 0 : getFailedCallTimes().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getIsDeleted() == null) ? 0 : getIsDeleted().hashCode());
@@ -124,6 +138,8 @@ public class InterfaceAccess implements Serializable {
         sb.append(", remainingTimes=").append(remainingTimes);
         sb.append(", interfaceId=").append(interfaceId);
         sb.append(", userid=").append(userid);
+        sb.append(", callTimes=").append(callTimes);
+        sb.append(", failedCallTimes=").append(failedCallTimes);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", isDeleted=").append(isDeleted);

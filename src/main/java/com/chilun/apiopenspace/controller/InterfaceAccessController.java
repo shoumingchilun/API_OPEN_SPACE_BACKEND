@@ -16,6 +16,7 @@ import com.chilun.apiopenspace.model.dto.BaseResponse;
 import com.chilun.apiopenspace.model.dto.InterfaceAccess.*;
 import com.chilun.apiopenspace.model.dto.PageRequest;
 import com.chilun.apiopenspace.model.entity.InterfaceAccess;
+import com.chilun.apiopenspace.model.entity.User;
 import com.chilun.apiopenspace.service.InterfaceAccessService;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
@@ -58,9 +59,8 @@ public class InterfaceAccessController {
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
 
         //二、获得当前登录用户id
-        UserMasked userMasked = (UserMasked) request.getSession().getAttribute(SessionKey.USER_IN_SESSION_KEY);
-        ThrowUtils.throwIf(userMasked == null, ErrorCode.NOT_LOGIN_ERROR, "未登录！");
-        Long userid = userMasked.getId();
+        User loggedInUser = userService.getLoggedInUser(request);
+        Long userid = loggedInUser.getId();
 
         //三、进行注册
         InterfaceAccess interfaceAccess = interfaceAccessService.InterfaceApply(userid, applyRequest.getInterfaceId());
@@ -81,13 +81,12 @@ public class InterfaceAccessController {
 
         //二、检查有无权限：要求——当前登录账户id为接口所有者的id
         //1获得当前用户
-        UserMasked userMasked = (UserMasked) request.getSession().getAttribute(SessionKey.USER_IN_SESSION_KEY);
-        ThrowUtils.throwIf(userMasked == null, ErrorCode.NOT_LOGIN_ERROR, "未登录！");
+        User loggedInUser = userService.getLoggedInUser(request);
         //2获得待修改访问码信息
         InterfaceAccess pendingAccesskey = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", abolishRequest.getAccesskey()));
         ThrowUtils.throwIf(pendingAccesskey == null, ErrorCode.PARAMS_ERROR, "申请不存在！");
         //3检查有无权限
-        ThrowUtils.throwIf(!Objects.equals(pendingAccesskey.getUserid(), userMasked.getId()), ErrorCode.NO_AUTH_ERROR, "非所有者无权废除！");
+        ThrowUtils.throwIf(!Objects.equals(pendingAccesskey.getUserid(), loggedInUser.getId()), ErrorCode.NO_AUTH_ERROR, "非所有者无权废除！");
 
         //三、进行废除
         interfaceAccessService.accesskeyAbolish(abolishRequest.getAccesskey());
@@ -108,13 +107,12 @@ public class InterfaceAccessController {
 
         //二、检查有无权限：要求——当前登录账户id为接口所有者的id
         //1获得当前用户
-        UserMasked userMasked = (UserMasked) request.getSession().getAttribute(SessionKey.USER_IN_SESSION_KEY);
-        ThrowUtils.throwIf(userMasked == null, ErrorCode.NOT_LOGIN_ERROR, "未登录！");
+        User loggedInUser = userService.getLoggedInUser(request);
         //2获得待修改端口信息
         InterfaceAccess pendingAccesskey = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", changeRequest.getAccesskey()));
         ThrowUtils.throwIf(pendingAccesskey == null, ErrorCode.PARAMS_ERROR, "申请不存在！");
         //3检查有无权限
-        ThrowUtils.throwIf(!Objects.equals(pendingAccesskey.getUserid(), userMasked.getId()), ErrorCode.NO_AUTH_ERROR, "非所有者无权修改！");
+        ThrowUtils.throwIf(!Objects.equals(pendingAccesskey.getUserid(), loggedInUser.getId()), ErrorCode.NO_AUTH_ERROR, "非所有者无权修改！");
 
         //三、进行修改
         InterfaceAccess interfaceAccess = interfaceAccessService.changeVerifyType(changeRequest.getAccesskey(), changeRequest.getType());
@@ -139,16 +137,15 @@ public class InterfaceAccessController {
 
         //二、构建筛选条件
         //1获得当前用户
-        UserMasked userMasked = (UserMasked) request.getSession().getAttribute(SessionKey.USER_IN_SESSION_KEY);
-        ThrowUtils.throwIf(userMasked == null, ErrorCode.NOT_LOGIN_ERROR, "未登录！");
+        User loggedInUser = userService.getLoggedInUser(request);
         //2构建筛选条件
         QueryWrapper<InterfaceAccess> wrapper = new QueryWrapper<>();
-        wrapper.eq("userid", userMasked.getId());
+        wrapper.eq("userid", loggedInUser.getId());
 
         //三、进行筛选
         Page<InterfaceAccess> page = interfaceAccessService.page(new Page<>(current, pageSize), wrapper);
 
-        //四、返回脱敏并结果
+        //四、返回脱敏后结果
         //1获得脱敏列表
         List<InterfaceAccessMasked> maskedList = interfaceAccessService.getInterfaceAccessMasked(page.getRecords());
         //2制作新的page
@@ -161,7 +158,7 @@ public class InterfaceAccessController {
         return ResultUtils.success(maskedPage);
     }
 
-    //扣费模块为完成，暂不实现改接口
+    //扣费模块未完成，暂不实现改接口
 
     //**************************管理员接口***************************
     //管理员添加接口申请

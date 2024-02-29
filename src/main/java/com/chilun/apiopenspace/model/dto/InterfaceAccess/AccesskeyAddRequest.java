@@ -28,4 +28,10 @@ public class AccesskeyAddRequest {
 
     @PositiveOrZero
     private Integer remainingTimes;
+
+    @PositiveOrZero
+    private Integer callTimes;
+
+    @PositiveOrZero
+    private Integer failedCallTimes;
 }
