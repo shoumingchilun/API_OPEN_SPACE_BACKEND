@@ -49,4 +49,13 @@ public interface InterfaceAccessService extends IService<InterfaceAccess> {
      * @return 已脱敏对象集合
      */
     List<InterfaceAccessMasked> getInterfaceAccessMasked(List<InterfaceAccess> interfaceAccessList);
+
+    /**
+     * 获取脱敏的接口信息
+     *
+     * @param callTimes 增加总调用次数
+     * @param failedCallTimes 增加失败调用次数
+     * @param accesskey 访问码
+     */
+    void addCallTimes(int callTimes, int failedCallTimes, String accesskey);
 }

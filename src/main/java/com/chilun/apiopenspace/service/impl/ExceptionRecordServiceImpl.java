@@ -34,10 +34,7 @@ public class ExceptionRecordServiceImpl extends ServiceImpl<ExceptionRecordMappe
     public Long recordException(String accesskey, String errorReason, String errorResponse, String errorRequest) {
         //一、参数校验
         //1对象是否为空
-        ThrowUtils.throwIf(ObjectUtils.anyNull(accesskey, errorResponse, errorRequest)
-                || errorReason != null && StringUtils.isEmpty(errorReason)
-                || StringUtils.isEmpty(errorResponse)
-                || StringUtils.isEmpty(errorRequest), ErrorCode.SYSTEM_ERROR, "记录异常时参数错误：参数为空");
+        ThrowUtils.throwIf(StringUtils.isAnyBlank(accesskey, errorReason), ErrorCode.SYSTEM_ERROR, "记录异常时参数错误：参数为空");
         //2对象参数是否有效
         InterfaceAccess carriedAccess = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
         ThrowUtils.throwIf(carriedAccess == null, ErrorCode.PARAMS_ERROR, "记录异常时参数错误：accesskey不存在");
@@ -49,10 +46,8 @@ public class ExceptionRecordServiceImpl extends ServiceImpl<ExceptionRecordMappe
         exceptionRecord.setUserid(carriedAccess.getUserid());
         exceptionRecord.setInterfaceId(carriedAccess.getInterfaceId());
         exceptionRecord.setErrorRequest(errorRequest);
-        exceptionRecord.setErrorRequest(errorRequest);
-        if (errorReason != null) {
-            exceptionRecord.setErrorReason(errorReason);
-        }
+        exceptionRecord.setErrorResponse(errorResponse);
+        exceptionRecord.setErrorReason(errorReason);
         //2保存对象
         boolean save = save(exceptionRecord);
         ThrowUtils.throwIf(!save, ErrorCode.SYSTEM_ERROR, "保存异常记录失败");

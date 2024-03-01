@@ -31,6 +31,8 @@ public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMappe
     UserService userService;
     @Resource(name = "InterfaceInfoService")
     InterfaceInfoService interfaceInfoService;
+    @Resource
+    InterfaceAccessMapper interfaceAccessMapper;
 
     @Override
     public InterfaceAccess InterfaceApply(Long userid, Long interfaceId) {
@@ -114,5 +116,10 @@ public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMappe
             interfaceAccessMaskedList.add(getInterfaceAccessMasked(interfaceAccess));
         }
         return interfaceAccessMaskedList;
+    }
+
+    @Override
+    public void addCallTimes(int callTimes, int failedCallTimes, String accesskey) {
+        interfaceAccessMapper.addCallTimes(callTimes, failedCallTimes, accesskey);
     }
 }

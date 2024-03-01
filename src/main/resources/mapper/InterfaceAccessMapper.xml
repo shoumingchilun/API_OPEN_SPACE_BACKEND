@@ -25,4 +25,9 @@
         userid,call_times,failed_call_times,
         create_time,update_time,is_deleted
     </sql>
+
+    <update id="addCallTimes">
+        update interface_access set call_times = call_times+${param1},failed_call_times = failed_call_times+${param2} where accesskey = #{param3}
+    </update>
+
 </mapper>
