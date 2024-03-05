@@ -2,6 +2,7 @@ package com.chilun.apiopenspace.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chilun.apiopenspace.model.Masked.ExceptionRecordMasked;
+import com.chilun.apiopenspace.model.dto.message.ErrorLogDTO;
 import com.chilun.apiopenspace.model.entity.ExceptionRecord;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * @createDate 2024-02-27 15:17:22
  */
 public interface ExceptionRecordService extends IService<ExceptionRecord> {
+    ExceptionRecord getExceptionRecordByErrorLogDTO(ErrorLogDTO dto);
     Long recordException(String accesskey,long userid,long interfaceId, String errorReason, String errorResponse, String errorRequest);
     ExceptionRecordMasked getExceptionRecordMasked(ExceptionRecord exceptionRecord);
     List<ExceptionRecordMasked> getExceptionRecordMasked(List<ExceptionRecord> exceptionRecordList);

@@ -53,9 +53,50 @@ public interface InterfaceAccessService extends IService<InterfaceAccess> {
     /**
      * 获取脱敏的接口信息
      *
-     * @param callTimes 增加总调用次数
+     * @param callTimes       增加总调用次数
      * @param failedCallTimes 增加失败调用次数
-     * @param accesskey 访问码
+     * @param accesskey       访问码
      */
     void addCallTimes(int callTimes, int failedCallTimes, String accesskey);
+
+    void batchAddCallTimes(List<BatchAddItem> list);
+
+    class BatchAddItem {
+        private int callTimes;
+        private int failedCallTimes;
+        private String accesskey;
+
+        public BatchAddItem(int callTimes, int failedCallTimes, String accesskey) {
+            this.callTimes = callTimes;
+            this.failedCallTimes = failedCallTimes;
+            this.accesskey = accesskey;
+        }
+
+        public BatchAddItem() {
+        }
+
+        public int getCallTimes() {
+            return callTimes;
+        }
+
+        public void setCallTimes(int callTimes) {
+            this.callTimes = callTimes;
+        }
+
+        public int getFailedCallTimes() {
+            return failedCallTimes;
+        }
+
+        public void setFailedCallTimes(int failedCallTimes) {
+            this.failedCallTimes = failedCallTimes;
+        }
+
+        public String getAccesskey() {
+            return accesskey;
+        }
+
+        public void setAccesskey(String accesskey) {
+            this.accesskey = accesskey;
+        }
+    }
 }

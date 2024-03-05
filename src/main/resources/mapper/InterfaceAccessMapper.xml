@@ -5,18 +5,18 @@
 <mapper namespace="com.chilun.apiopenspace.mapper.InterfaceAccessMapper">
 
     <resultMap id="BaseResultMap" type="com.chilun.apiopenspace.model.entity.InterfaceAccess">
-            <id property="accesskey" column="accesskey" jdbcType="VARCHAR"/>
-            <result property="verifyType" column="verify_type" jdbcType="TINYINT"/>
-            <result property="secretkey" column="secretkey" jdbcType="VARCHAR"/>
-            <result property="remainingAmount" column="remaining_amount" jdbcType="DECIMAL"/>
-            <result property="remainingTimes" column="remaining_times" jdbcType="INTEGER"/>
-            <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
-            <result property="userid" column="userid" jdbcType="BIGINT"/>
-            <result property="callTimes" column="call_times" jdbcType="INTEGER"/>
-            <result property="failedCallTimes" column="failed_call_times" jdbcType="INTEGER"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+        <id property="accesskey" column="accesskey" jdbcType="VARCHAR"/>
+        <result property="verifyType" column="verify_type" jdbcType="TINYINT"/>
+        <result property="secretkey" column="secretkey" jdbcType="VARCHAR"/>
+        <result property="remainingAmount" column="remaining_amount" jdbcType="DECIMAL"/>
+        <result property="remainingTimes" column="remaining_times" jdbcType="INTEGER"/>
+        <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
+        <result property="userid" column="userid" jdbcType="BIGINT"/>
+        <result property="callTimes" column="call_times" jdbcType="INTEGER"/>
+        <result property="failedCallTimes" column="failed_call_times" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -27,7 +27,19 @@
     </sql>
 
     <update id="addCallTimes">
-        update interface_access set call_times = call_times+${param1},failed_call_times = failed_call_times+${param2} where accesskey = #{param3}
+        update interface_access
+        set call_times        = call_times + ${param1},
+            failed_call_times = failed_call_times + ${param2}
+        where accesskey = #{param3}
+    </update>
+
+    <update id="batchAddCallTimes">
+        <foreach item="item" index="index" collection="list" separator=";">
+            UPDATE interface_access
+            SET call_times = call_times + ${item.callTimes},
+            failed_call_times = failed_call_times + ${item.failedCallTimes}
+            WHERE accesskey = #{item.accesskey}
+        </foreach>
     </update>
 
 </mapper>

@@ -93,7 +93,7 @@ public class InterfaceAccess implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        generator.domain.InterfaceAccess other = (generator.domain.InterfaceAccess) that;
+        InterfaceAccess other = (InterfaceAccess) that;
         return (this.getAccesskey() == null ? other.getAccesskey() == null : this.getAccesskey().equals(other.getAccesskey()))
                 && (this.getVerifyType() == null ? other.getVerifyType() == null : this.getVerifyType().equals(other.getVerifyType()))
                 && (this.getSecretkey() == null ? other.getSecretkey() == null : this.getSecretkey().equals(other.getSecretkey()))

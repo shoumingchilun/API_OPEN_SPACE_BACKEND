@@ -6,6 +6,7 @@ import com.chilun.apiopenspace.Utils.ThrowUtils;
 import com.chilun.apiopenspace.exception.ErrorCode;
 import com.chilun.apiopenspace.mapper.ExceptionRecordMapper;
 import com.chilun.apiopenspace.model.Masked.ExceptionRecordMasked;
+import com.chilun.apiopenspace.model.dto.message.ErrorLogDTO;
 import com.chilun.apiopenspace.model.entity.ExceptionRecord;
 import com.chilun.apiopenspace.model.entity.InterfaceAccess;
 import com.chilun.apiopenspace.service.ExceptionRecordService;
@@ -20,9 +21,8 @@ import java.util.List;
 
 /**
  * 用于记录异常情况的服务层
- *
+ * <p>
  * 注意：校验accesskey是否有效其实意义不大，因为网关转发请求前accesskey的有效性已经校验过了，只有有效的情况下，才可能发出异常日志消息
- *
  *
  * @author 齿轮
  * @description 针对表【exception_record(异常记录表)】的数据库操作Service实现
@@ -31,11 +31,24 @@ import java.util.List;
 @Service
 public class ExceptionRecordServiceImpl extends ServiceImpl<ExceptionRecordMapper, ExceptionRecord>
         implements ExceptionRecordService {
+
     @Resource
     InterfaceAccessService interfaceAccessService;
 
     @Override
-    public Long recordException(String accesskey,long userid,long interfaceId, String errorReason, String errorResponse, String errorRequest) {
+    public ExceptionRecord getExceptionRecordByErrorLogDTO(ErrorLogDTO dto) {
+        ExceptionRecord exceptionRecord = new ExceptionRecord();
+        exceptionRecord.setAccesskey(dto.getAccesskey());
+        exceptionRecord.setUserid(dto.getUserid());
+        exceptionRecord.setInterfaceId(dto.getInterfaceId());
+        exceptionRecord.setErrorReason(dto.getErrorReason());
+        exceptionRecord.setErrorRequest(dto.getRequest());
+        exceptionRecord.setErrorResponse(dto.getResponse());
+        return exceptionRecord;
+    }
+
+    @Override
+    public Long recordException(String accesskey, long userid, long interfaceId, String errorReason, String errorResponse, String errorRequest) {
         //一、参数校验——不校验
 
         //二、进行保存

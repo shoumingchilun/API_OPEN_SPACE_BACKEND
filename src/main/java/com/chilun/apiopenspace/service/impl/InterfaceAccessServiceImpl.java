@@ -122,4 +122,8 @@ public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMappe
     public void addCallTimes(int callTimes, int failedCallTimes, String accesskey) {
         interfaceAccessMapper.addCallTimes(callTimes, failedCallTimes, accesskey);
     }
+
+    public void batchAddCallTimes(List<BatchAddItem> list) {
+        interfaceAccessMapper.batchAddCallTimes(list);
+    }
 }
