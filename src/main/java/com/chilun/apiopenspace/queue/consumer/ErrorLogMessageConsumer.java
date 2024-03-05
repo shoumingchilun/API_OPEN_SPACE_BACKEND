@@ -3,6 +3,7 @@ package com.chilun.apiopenspace.queue.consumer;
 import com.alibaba.fastjson.JSON;
 import com.chilun.apiopenspace.model.dto.message.ErrorLogDTO;
 import com.chilun.apiopenspace.service.ExceptionRecordService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
  * @author 齿轮
  * @date 2024-03-01-15:12
  */
+@Slf4j
 @Component
 @RocketMQMessageListener(topic = "API_SPACE", selectorExpression = "errorlog", consumerGroup = "API_BACKEND_2")
 public class ErrorLogMessageConsumer implements RocketMQListener<ErrorLogDTO> {
@@ -24,7 +26,7 @@ public class ErrorLogMessageConsumer implements RocketMQListener<ErrorLogDTO> {
 
     @Override
     public void onMessage(ErrorLogDTO message) {
-        System.out.println(JSON.toJSONString(message));
-        exceptionRecordService.recordException(message.getAccesskey(), message.getErrorReason(), message.getResponse(), message.getRequest());
+        log.info("Save ErrorLog Message: " + JSON.toJSONString(message));
+        exceptionRecordService.recordException(message.getAccesskey(), message.getUserid(), message.getInterfaceId(), message.getErrorReason(), message.getResponse(), message.getRequest());
     }
 }

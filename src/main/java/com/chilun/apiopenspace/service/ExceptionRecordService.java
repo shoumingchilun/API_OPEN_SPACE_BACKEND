@@ -14,7 +14,7 @@ import java.util.List;
  * @createDate 2024-02-27 15:17:22
  */
 public interface ExceptionRecordService extends IService<ExceptionRecord> {
-    Long recordException(String accesskey, String errorReason, String errorResponse, String errorRequest);
+    Long recordException(String accesskey,long userid,long interfaceId, String errorReason, String errorResponse, String errorRequest);
     ExceptionRecordMasked getExceptionRecordMasked(ExceptionRecord exceptionRecord);
     List<ExceptionRecordMasked> getExceptionRecordMasked(List<ExceptionRecord> exceptionRecordList);
 }

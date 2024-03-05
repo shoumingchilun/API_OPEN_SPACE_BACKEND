@@ -10,7 +10,6 @@ import com.chilun.apiopenspace.model.entity.ExceptionRecord;
 import com.chilun.apiopenspace.model.entity.InterfaceAccess;
 import com.chilun.apiopenspace.service.ExceptionRecordService;
 import com.chilun.apiopenspace.service.InterfaceAccessService;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 用于记录异常情况的服务层
+ *
+ * 注意：校验accesskey是否有效其实意义不大，因为网关转发请求前accesskey的有效性已经校验过了，只有有效的情况下，才可能发出异常日志消息
+ *
+ *
  * @author 齿轮
  * @description 针对表【exception_record(异常记录表)】的数据库操作Service实现
  * @createDate 2024-02-27 15:17:22
@@ -31,20 +35,15 @@ public class ExceptionRecordServiceImpl extends ServiceImpl<ExceptionRecordMappe
     InterfaceAccessService interfaceAccessService;
 
     @Override
-    public Long recordException(String accesskey, String errorReason, String errorResponse, String errorRequest) {
-        //一、参数校验
-        //1对象是否为空
-        ThrowUtils.throwIf(StringUtils.isAnyBlank(accesskey, errorReason), ErrorCode.SYSTEM_ERROR, "记录异常时参数错误：参数为空");
-        //2对象参数是否有效
-        InterfaceAccess carriedAccess = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
-        ThrowUtils.throwIf(carriedAccess == null, ErrorCode.PARAMS_ERROR, "记录异常时参数错误：accesskey不存在");
+    public Long recordException(String accesskey,long userid,long interfaceId, String errorReason, String errorResponse, String errorRequest) {
+        //一、参数校验——不校验
 
         //二、进行保存
         //1新建对象并赋值
         ExceptionRecord exceptionRecord = new ExceptionRecord();
         exceptionRecord.setAccesskey(accesskey);
-        exceptionRecord.setUserid(carriedAccess.getUserid());
-        exceptionRecord.setInterfaceId(carriedAccess.getInterfaceId());
+        exceptionRecord.setUserid(userid);
+        exceptionRecord.setInterfaceId(interfaceId);
         exceptionRecord.setErrorRequest(errorRequest);
         exceptionRecord.setErrorResponse(errorResponse);
         exceptionRecord.setErrorReason(errorReason);
