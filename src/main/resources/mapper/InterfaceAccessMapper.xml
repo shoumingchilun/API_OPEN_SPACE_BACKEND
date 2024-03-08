@@ -39,7 +39,8 @@
         <foreach item="item" index="index" collection="list" separator=";">
             UPDATE interface_access
             SET call_times = call_times + ${item.callTimes},
-            failed_call_times = failed_call_times + ${item.failedCallTimes}
+            failed_call_times = failed_call_times + ${item.failedCallTimes},
+            remaining_amount = remaining_amount - ${item.cost}
             WHERE accesskey = #{item.accesskey}
         </foreach>
     </update>

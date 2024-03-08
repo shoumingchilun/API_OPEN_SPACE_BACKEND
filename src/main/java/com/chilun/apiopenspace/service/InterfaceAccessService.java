@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.chilun.apiopenspace.model.Masked.InterfaceAccessMasked;
 import com.chilun.apiopenspace.model.entity.InterfaceAccess;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -64,6 +65,23 @@ public interface InterfaceAccessService extends IService<InterfaceAccess> {
     class BatchAddItem {
         private int callTimes;
         private int failedCallTimes;
+        private BigDecimal cost;
+
+        public BatchAddItem(int callTimes, int failedCallTimes, BigDecimal cost, String accesskey) {
+            this.callTimes = callTimes;
+            this.failedCallTimes = failedCallTimes;
+            this.cost = cost;
+            this.accesskey = accesskey;
+        }
+
+        public BigDecimal getCost() {
+            return cost;
+        }
+
+        public void setCost(BigDecimal cost) {
+            this.cost = cost;
+        }
+
         private String accesskey;
 
         public BatchAddItem(int callTimes, int failedCallTimes, String accesskey) {

@@ -1,6 +1,7 @@
 package com.chilun.apiopenspace.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chilun.apiopenspace.Utils.CryptographicUtils;
 import com.chilun.apiopenspace.Utils.ResultUtils;
@@ -19,6 +20,7 @@ import com.chilun.apiopenspace.service.InterfaceAccessService;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,7 @@ import java.util.Objects;
  * @author 齿轮
  * @date 2024-02-15-22:00
  */
+@Slf4j
 @RestController
 @RequestMapping("/interfaceAccess")
 public class InterfaceAccessController {
@@ -156,7 +159,20 @@ public class InterfaceAccessController {
         return ResultUtils.success(maskedPage);
     }
 
-    //扣费模块未完成，暂不实现改接口
+    //扣费模块正在完成......
+
+    //充钱接口（简单实现）
+    @PostMapping("/charge")
+    public BaseResponse<InterfaceAccessMasked> topUp(@RequestBody @Valid TopUpRequest topUpRequest) {
+        String accesskey = topUpRequest.getAccesskey();
+        InterfaceAccess interfaceAccess = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
+        ThrowUtils.throwIf(interfaceAccess == null, ErrorCode.PARAMS_ERROR, "申请不存在！");
+        interfaceAccess.setRemainingAmount(interfaceAccess.getRemainingAmount().add(topUpRequest.getAmount()));
+        int update = interfaceAccessService.getBaseMapper().update(interfaceAccess, new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
+        ThrowUtils.throwIf(update == 0, ErrorCode.PARAMS_ERROR, "更新失败！");
+        InterfaceAccess updatedInterfaceAccess = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
+        return ResultUtils.success(interfaceAccessService.getInterfaceAccessMasked(updatedInterfaceAccess));
+    }
 
     //**************************管理员接口***************************
     //管理员添加接口申请

@@ -2,7 +2,9 @@ package com.chilun.apiopenspace.controller;
 
 import com.chilun.apiopenspace.Utils.ResultUtils;
 import com.chilun.apiopenspace.Utils.ThrowUtils;
+import com.chilun.apiopenspace.aop.annotation.UserAuthCheck;
 import com.chilun.apiopenspace.constant.CostTypeValue;
+import com.chilun.apiopenspace.constant.UserRoleValue;
 import com.chilun.apiopenspace.exception.ErrorCode;
 import com.chilun.apiopenspace.model.dto.BaseResponse;
 import com.chilun.apiopenspace.model.dto.DeleteRequest;
@@ -85,5 +87,40 @@ public class InterfaceChargeController {
 
         //三、返回结果
         return ResultUtils.success(interfaceChargeStrategy);
+    }
+
+    @PostMapping("/admin/set")
+    @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
+    public BaseResponse<InterfaceChargeStrategy> adminSetOrChangeChargeStrategy(
+            @RequestBody @Valid InterfaceChargeSetRequest setRequest) {
+        //一、参数校验
+        //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
+        ThrowUtils.throwIf(setRequest.getCostType() == CostTypeValue.FIXED_FEE && setRequest.getFixedFee() == null,
+                ErrorCode.PARAMS_ERROR, "固定费用策略下，固定费用不能为空！");
+        ThrowUtils.throwIf(setRequest.getCostType() == CostTypeValue.FIXED_TIME && setRequest.getFixedTime() == null,
+                ErrorCode.PARAMS_ERROR, "固定时长策略下，固定时长不能为空！");
+        //2参数范围校验：@Valid 实现
+        //3权限校验：AOP实现
+
+        //二、进入修改
+        InterfaceChargeStrategy strategy = chargeStrategyService.alterInterfaceChargeStrategy(setRequest.getId(), setRequest.getCostType(), setRequest.getFixedFee(), setRequest.getFixedTime());
+
+        //三、返回结果
+        return ResultUtils.success(strategy);
+    }
+
+    @PostMapping("/admin/delete")
+    @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
+    public BaseResponse<InterfaceChargeStrategy> adminDeleteChargeStrategy(
+            @RequestBody @Valid DeleteRequest deleteRequest) {
+        //一、参数校验
+        //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
+        //2参数范围校验：@Valid 实现
+        //3权限校验：AOP实现
+        //二、开始删除
+        chargeStrategyService.deleteInterfaceChargeStrategy(deleteRequest.getId());
+
+        //三、返回结果
+        return ResultUtils.success(null);
     }
 }

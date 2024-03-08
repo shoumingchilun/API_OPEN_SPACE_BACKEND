@@ -3,18 +3,24 @@ package com.chilun.apiopenspace.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chilun.apiopenspace.Utils.ThrowUtils;
+import com.chilun.apiopenspace.constant.CostTypeValue;
 import com.chilun.apiopenspace.exception.ErrorCode;
 import com.chilun.apiopenspace.mapper.InterfaceAccessMapper;
 import com.chilun.apiopenspace.model.Masked.InterfaceAccessMasked;
 import com.chilun.apiopenspace.model.entity.InterfaceAccess;
+import com.chilun.apiopenspace.model.entity.InterfaceChargeStrategy;
+import com.chilun.apiopenspace.model.entity.InterfaceInfo;
 import com.chilun.apiopenspace.service.InterfaceAccessService;
+import com.chilun.apiopenspace.service.InterfaceChargeStrategyService;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +39,8 @@ public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMappe
     InterfaceInfoService interfaceInfoService;
     @Resource
     InterfaceAccessMapper interfaceAccessMapper;
+    @Resource
+    InterfaceChargeStrategyService chargeStrategyService;
 
     @Override
     public InterfaceAccess InterfaceApply(Long userid, Long interfaceId) {
@@ -43,7 +51,8 @@ public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMappe
 
         //二、校验用户、接口是否存在
         ThrowUtils.throwIf(userService.getById(userid) == null, ErrorCode.PARAMS_ERROR, "用户不存在");
-        ThrowUtils.throwIf(interfaceInfoService.getById(interfaceId) == null, ErrorCode.PARAMS_ERROR, "申请接口不存在");
+        InterfaceInfo interfaceInfo = interfaceInfoService.getById(interfaceId);
+        ThrowUtils.throwIf(interfaceInfo == null, ErrorCode.PARAMS_ERROR, "申请接口不存在");
 
         //三、进行申请
         //1获得待注册接口申请类
@@ -55,11 +64,23 @@ public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMappe
         String secretkey = UUID.randomUUID().toString();
         interfaceAccess.setAccesskey(accesskey);
         interfaceAccess.setSecretkey(secretkey);
+        //3获得收费信息并填入InterfaceAccess
+        if (interfaceInfo.getIsCost() == 1) {
+            //说明已开启收费
+            InterfaceChargeStrategy chargeStrategy = chargeStrategyService.getById(interfaceInfo.getId());
+            switch (chargeStrategy.getCostType()) {
+                case CostTypeValue.FIXED_FEE -> interfaceAccess.setCost(chargeStrategy.getFixedFee());
+                case CostTypeValue.VARIABLE_FEE -> interfaceAccess.setCost(new BigDecimal("-1"));
+            }
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MINUTE,chargeStrategy.getFixedTime().intValue());
+            interfaceAccess.setExpiration(calendar.getTime());
+        }
 
-        //2进行申请注册
+        //进行申请注册
         boolean save = save(interfaceAccess);
         ThrowUtils.throwIf(!save, ErrorCode.SYSTEM_ERROR, "申请失败");
-        //3返回注册结果
+        //返回注册结果
         return this.getBaseMapper().selectOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
     }
 

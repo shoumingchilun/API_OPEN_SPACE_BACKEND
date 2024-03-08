@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -90,6 +91,7 @@ public class LogPersistTask {
         log.info("持久化日常日志开始----------------");
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, int[]> addItemMap = new HashMap<>();
+        Map<String, BigDecimal> costMap = new HashMap<>();
         List<MessageView> receives = new ArrayList<>();
         try {
             receives = commonConsumer.receive(10000, Duration.ofSeconds(60));
@@ -101,11 +103,15 @@ public class LogPersistTask {
                 try {
                     AccessLogDTO accessLogDTO = objectMapper.readValue(messageContent, AccessLogDTO.class);
                     addItemMap.computeIfAbsent(accessLogDTO.getAccesskey(), k -> new int[]{0, 0});
+                    costMap.computeIfAbsent(accessLogDTO.getAccesskey(), k -> new BigDecimal("0"));
+                    //修改addItemMap
                     int[] times = addItemMap.get(accessLogDTO.getAccesskey());
                     if (!accessLogDTO.isSuccess()) {
                         times[1]++;
                     }
                     times[0]++;
+                    //修改costMap
+                    costMap.put(accessLogDTO.getAccesskey(), costMap.get(accessLogDTO.getAccesskey()).add(accessLogDTO.getCost()));
                 } catch (JsonProcessingException e) {
                     log.error("消息解码失败：", e);
                 }
@@ -115,7 +121,7 @@ public class LogPersistTask {
         }
         List<InterfaceAccessService.BatchAddItem> list = new ArrayList<>();
         addItemMap.forEach((k, v) -> {
-            list.add(new InterfaceAccessService.BatchAddItem(v[0], v[1], k));
+            list.add(new InterfaceAccessService.BatchAddItem(v[0], v[1], costMap.get(k), k));
         });
         if (!list.isEmpty())
             interfaceAccessService.batchAddCallTimes(list);
