@@ -1,8 +1,13 @@
 package com.chilun.apiopenspace.model.Masked;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.chilun.apiopenspace.model.entity.InterfaceAccess;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author 齿轮
@@ -14,12 +19,14 @@ public class InterfaceAccessMasked {
     private String accesskey;
     private Integer verifyType;
     private BigDecimal remainingAmount;
-    private Integer remainingTimes;
+    private BigDecimal cost;
+    private Date expiration;
     private Long interfaceId;
     private Long userid;
     private Integer callTimes;
     private Integer failedCallTimes;
     private static final long serialVersionUID = 1L;
+
 
     @Override
     public boolean equals(Object that) {
@@ -32,11 +39,12 @@ public class InterfaceAccessMasked {
         if (getClass() != that.getClass()) {
             return false;
         }
-        InterfaceAccessMasked other = (InterfaceAccessMasked) that;
+        InterfaceAccess other = (InterfaceAccess) that;
         return (this.getAccesskey() == null ? other.getAccesskey() == null : this.getAccesskey().equals(other.getAccesskey()))
                 && (this.getVerifyType() == null ? other.getVerifyType() == null : this.getVerifyType().equals(other.getVerifyType()))
                 && (this.getRemainingAmount() == null ? other.getRemainingAmount() == null : this.getRemainingAmount().equals(other.getRemainingAmount()))
-                && (this.getRemainingTimes() == null ? other.getRemainingTimes() == null : this.getRemainingTimes().equals(other.getRemainingTimes()))
+                && (this.getCost() == null ? other.getCost() == null : this.getCost().equals(other.getCost()))
+                && (this.getExpiration() == null ? other.getExpiration() == null : this.getExpiration().equals(other.getExpiration()))
                 && (this.getInterfaceId() == null ? other.getInterfaceId() == null : this.getInterfaceId().equals(other.getInterfaceId()))
                 && (this.getUserid() == null ? other.getUserid() == null : this.getUserid().equals(other.getUserid()))
                 && (this.getCallTimes() == null ? other.getCallTimes() == null : this.getCallTimes().equals(other.getCallTimes()))
@@ -50,7 +58,8 @@ public class InterfaceAccessMasked {
         result = prime * result + ((getAccesskey() == null) ? 0 : getAccesskey().hashCode());
         result = prime * result + ((getVerifyType() == null) ? 0 : getVerifyType().hashCode());
         result = prime * result + ((getRemainingAmount() == null) ? 0 : getRemainingAmount().hashCode());
-        result = prime * result + ((getRemainingTimes() == null) ? 0 : getRemainingTimes().hashCode());
+        result = prime * result + ((getCost() == null) ? 0 : getCost().hashCode());
+        result = prime * result + ((getExpiration() == null) ? 0 : getExpiration().hashCode());
         result = prime * result + ((getInterfaceId() == null) ? 0 : getInterfaceId().hashCode());
         result = prime * result + ((getUserid() == null) ? 0 : getUserid().hashCode());
         result = prime * result + ((getCallTimes() == null) ? 0 : getCallTimes().hashCode());
@@ -67,13 +76,15 @@ public class InterfaceAccessMasked {
         sb.append(", accesskey=").append(accesskey);
         sb.append(", verifyType=").append(verifyType);
         sb.append(", remainingAmount=").append(remainingAmount);
-        sb.append(", remainingTimes=").append(remainingTimes);
+        sb.append(", cost=").append(cost);
+        sb.append(", expiration=").append(expiration);
         sb.append(", interfaceId=").append(interfaceId);
         sb.append(", userid=").append(userid);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append(", callTimes=").append(callTimes);
         sb.append(", failedCallTimes=").append(failedCallTimes);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
     }
+
 }

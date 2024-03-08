@@ -7,6 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author 齿轮
@@ -26,8 +27,9 @@ public class AccesskeyAddRequest {
 
     private BigDecimal remainingAmount;
 
-    @PositiveOrZero
-    private Integer remainingTimes;
+    private BigDecimal cost;
+
+    private Date expiration;
 
     @PositiveOrZero
     private Integer callTimes;

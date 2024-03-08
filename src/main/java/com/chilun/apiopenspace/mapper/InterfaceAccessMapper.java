@@ -3,7 +3,6 @@ package com.chilun.apiopenspace.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chilun.apiopenspace.model.entity.InterfaceAccess;
 import com.chilun.apiopenspace.service.InterfaceAccessService;
-import com.chilun.apiopenspace.service.impl.InterfaceAccessServiceImpl;
 
 import java.util.List;
 

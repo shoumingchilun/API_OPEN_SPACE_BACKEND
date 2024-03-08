@@ -9,7 +9,8 @@
         <result property="verifyType" column="verify_type" jdbcType="TINYINT"/>
         <result property="secretkey" column="secretkey" jdbcType="VARCHAR"/>
         <result property="remainingAmount" column="remaining_amount" jdbcType="DECIMAL"/>
-        <result property="remainingTimes" column="remaining_times" jdbcType="INTEGER"/>
+        <result property="cost" column="cost" jdbcType="DECIMAL"/>
+        <result property="expiration" column="expiration" jdbcType="TIMESTAMP"/>
         <result property="interfaceId" column="interface_id" jdbcType="BIGINT"/>
         <result property="userid" column="userid" jdbcType="BIGINT"/>
         <result property="callTimes" column="call_times" jdbcType="INTEGER"/>
@@ -21,9 +22,10 @@
 
     <sql id="Base_Column_List">
         accesskey,verify_type,secretkey,
-        remaining_amount,remaining_times,interface_id,
-        userid,call_times,failed_call_times,
-        create_time,update_time,is_deleted
+        remaining_amount,cost,expiration,
+        interface_id,userid,call_times,
+        failed_call_times,create_time,update_time,
+        is_deleted
     </sql>
 
     <update id="addCallTimes">

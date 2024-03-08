@@ -210,7 +210,7 @@ public class InterfaceAccessController {
                         updateRequest.getUserid(),
                         updateRequest.getVerifyType(),
                         updateRequest.getRemainingAmount(),
-                        updateRequest.getRemainingTimes())
+                        updateRequest.getCost())
                 , ErrorCode.PARAMS_ERROR, "无可更改参数");
         //4校验用户id/接口id/Accesskey参数是否合理（存在）
         InterfaceAccess newInterfaceInfo = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", updateRequest.getAccesskey()));

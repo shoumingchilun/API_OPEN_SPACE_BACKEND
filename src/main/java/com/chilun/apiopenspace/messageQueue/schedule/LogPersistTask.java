@@ -102,7 +102,7 @@ public class LogPersistTask {
                     AccessLogDTO accessLogDTO = objectMapper.readValue(messageContent, AccessLogDTO.class);
                     addItemMap.computeIfAbsent(accessLogDTO.getAccesskey(), k -> new int[]{0, 0});
                     int[] times = addItemMap.get(accessLogDTO.getAccesskey());
-                    if (!accessLogDTO.isSuccess()){
+                    if (!accessLogDTO.isSuccess()) {
                         times[1]++;
                     }
                     times[0]++;
@@ -113,14 +113,15 @@ public class LogPersistTask {
         } catch (ClientException e) {
             log.error("消费者接受消息失败", e);
         }
-        List<InterfaceAccessService.BatchAddItem>list = new ArrayList<>();
+        List<InterfaceAccessService.BatchAddItem> list = new ArrayList<>();
         addItemMap.forEach((k, v) -> {
             list.add(new InterfaceAccessService.BatchAddItem(v[0], v[1], k));
         });
-        interfaceAccessService.batchAddCallTimes(list);
+        if (!list.isEmpty())
+            interfaceAccessService.batchAddCallTimes(list);
         receives.forEach(messageView -> {
             try {
-                errorConsumer.ack(messageView);
+                commonConsumer.ack(messageView);
             } catch (ClientException e) {
                 ByteBuffer body = messageView.getBody();
                 byte[] bytes = new byte[body.remaining()];

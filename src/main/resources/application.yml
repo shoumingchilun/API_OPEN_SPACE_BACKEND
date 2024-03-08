@@ -14,7 +14,7 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    default-executor-type: batch
+#    default-executor-type: batch
   global-config:
     db-config:
       logic-delete-field: is_deleted # 全局逻辑删除的实体字段名
@@ -29,6 +29,6 @@ cryptographic:
   AESKey: hello
 logging:
   level:
-    root: debug
+    root: info
 #  file:
 #    name: space.log

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
 * @author 齿轮
 * @description 针对表【interface_access(接口申请表)】的数据库操作Service实现
-* @createDate 2024-02-27 13:47:15
+* @createDate 2024-03-08 12:50:32
 */
 @Service
 public class InterfaceAccessServiceImpl extends ServiceImpl<InterfaceAccessMapper, InterfaceAccess>
