@@ -10,7 +10,9 @@ import com.chilun.apiopenspace.model.dto.DeleteRequest;
 import com.chilun.apiopenspace.model.dto.Route.InitRouteRequest;
 import com.chilun.apiopenspace.model.dto.Route.SaveOrUpdateRouteRequest;
 import com.chilun.apiopenspace.model.entity.InterfaceInfo;
+import com.chilun.apiopenspace.model.entity.RateLimitStrategy;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
+import com.chilun.apiopenspace.service.RateLimitStrategyService;
 import com.chilun.apiopenspace.service.RouteService;
 import com.chilun.apiopenspace.service.feign.FeignRouteService;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
+ * 此类功能：
+ * 1.修改数据库内接口信息（原功能）
+ * 2.修改数据库内接口信息后，同步修改路由（装饰功能）
+ * 3.RouteService实现类，提供修改路由接口（额外功能，可能需解耦）
+ *
  * @author 齿轮
  * @date 2024-02-14-14:22
  */
 @Service("InterfaceInfo&RouteService")
-public class DecoratedInterfaceInfoService extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
+public class DecoratedInterfaceInfoWithRouteService extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
         implements InterfaceInfoService, RouteService {
 
     @Resource(name = "InterfaceInfoService")
@@ -32,6 +40,9 @@ public class DecoratedInterfaceInfoService extends ServiceImpl<InterfaceInfoMapp
 
     @Resource
     FeignRouteService routeService;
+
+    @Resource(name = "RateLimitStrategyService")
+    RateLimitStrategyService rateLimitStrategyService;
 
     @Override
     public long InterfaceRegister(Long userid, String requestPath, Integer requestMethod) {
@@ -78,7 +89,21 @@ public class DecoratedInterfaceInfoService extends ServiceImpl<InterfaceInfoMapp
 
     @Override
     public void saveOrUpdateRoute(Long id, String uri) {
-        boolean add = routeService.add(new SaveOrUpdateRouteRequest(String.valueOf(id), uri));
+        InterfaceInfo interfaceInfo = this.getById(id);
+        SaveOrUpdateRouteRequest request;
+        if(interfaceInfo.getIsRestrict()==0){
+            request = new SaveOrUpdateRouteRequest(String.valueOf(id), uri);
+        }else{
+            RateLimitStrategy limitStrategy = rateLimitStrategyService.getById(id);
+            request = new SaveOrUpdateRouteRequest(String.valueOf(id), uri, limitStrategy.getReplenishRate(), limitStrategy.getBurstCapacity(), limitStrategy.getRequestedTokens());
+        }
+        boolean add = routeService.add(request);
+        ThrowUtils.throwIf(!add, ErrorCode.SYSTEM_ERROR, "路由注册失败");
+    }
+
+    @Override
+    public void saveOrUpdateRoute(Long id, String uri, Integer replenishRate, Integer burstCapacity, Integer requestedTokens) {
+        boolean add = routeService.add(new SaveOrUpdateRouteRequest(String.valueOf(id), uri, replenishRate, burstCapacity, requestedTokens));
         ThrowUtils.throwIf(!add, ErrorCode.SYSTEM_ERROR, "路由注册失败");
     }
 
@@ -96,7 +121,14 @@ public class DecoratedInterfaceInfoService extends ServiceImpl<InterfaceInfoMapp
         InitRouteRequest initRouteRequest = new InitRouteRequest();
         List<SaveOrUpdateRouteRequest> list = new ArrayList<>();
         interfaceInfos.forEach(interfaceInfo -> {
-            SaveOrUpdateRouteRequest request = new SaveOrUpdateRouteRequest(String.valueOf(interfaceInfo.getId()), interfaceInfo.getRequestPath());
+            SaveOrUpdateRouteRequest request;
+            if (interfaceInfo.getIsRestrict() == 1) {
+                //说明需要开启限制策略
+                RateLimitStrategy limitStrategy = rateLimitStrategyService.getById(interfaceInfo.getId());
+                request = new SaveOrUpdateRouteRequest(String.valueOf(interfaceInfo.getId()), interfaceInfo.getRequestPath(), limitStrategy.getReplenishRate(), limitStrategy.getBurstCapacity(), limitStrategy.getRequestedTokens());
+            } else {
+                request = new SaveOrUpdateRouteRequest(String.valueOf(interfaceInfo.getId()), interfaceInfo.getRequestPath());
+            }
             list.add(request);
         });
         initRouteRequest.setList(list);
