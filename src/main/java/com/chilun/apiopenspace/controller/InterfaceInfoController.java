@@ -19,6 +19,10 @@ import com.chilun.apiopenspace.model.entity.InterfaceInfo;
 import com.chilun.apiopenspace.model.entity.User;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +41,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/interfaceInfo")
+@Api(tags = "接口信息管理控制器")
 public class InterfaceInfoController {
     @Resource(name = "InterfaceInfo&RouteService")
     InterfaceInfoService interfaceInfoService;
@@ -47,7 +52,8 @@ public class InterfaceInfoController {
 
     //注册接口
     @PostMapping("/register")
-    public BaseResponse<Long> interfaceRegister(@RequestBody @Valid InterfaceRegisterRequest registerRequest,HttpServletRequest request) {
+    @Operation(summary = "注册接口的接口")
+    public BaseResponse<Long> interfaceRegister(@RequestBody @Valid @Parameter(description = "接口注册DTO") InterfaceRegisterRequest registerRequest,HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -62,7 +68,8 @@ public class InterfaceInfoController {
 
     //状态管理（启用、禁用）
     @PostMapping("/statusManage")
-    public BaseResponse<InterfaceInfoMasked> statusManage(@RequestBody @Valid InterfaceStatusManageRequest statusManageRequest,
+    @Operation(summary = "状态管理（启用、禁用）")
+    public BaseResponse<InterfaceInfoMasked> statusManage(@RequestBody @Valid @Parameter(description = "接口状态管理DTO") InterfaceStatusManageRequest statusManageRequest,
                                                           HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
@@ -89,7 +96,8 @@ public class InterfaceInfoController {
 
     //废弃接口
     @PostMapping("/abolish")
-    public BaseResponse<Void> interfaceAbolish(@RequestBody @Valid DeleteRequest deleteRequest, HttpServletRequest request) {
+    @Operation(summary = "废弃接口")
+    public BaseResponse<Void> interfaceAbolish(@RequestBody @Valid @Parameter(description = "接口废弃DTO") DeleteRequest deleteRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -116,7 +124,8 @@ public class InterfaceInfoController {
 
     //用户更改接口信息
     @PostMapping("/update")
-    public BaseResponse<InterfaceInfoMasked> update(@RequestBody @Valid InterfaceUpdateRequest updateRequest,
+    @Operation(summary = "用户更改接口信息")
+    public BaseResponse<InterfaceInfoMasked> update(@RequestBody @Valid @Parameter(description = "接口更新DTO") InterfaceUpdateRequest updateRequest,
                                                     HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
@@ -162,6 +171,7 @@ public class InterfaceInfoController {
 
     //用户查自己接口
     @PostMapping("/querySelf")
+    @Operation(summary = "用户查询自身发布接口")
     public BaseResponse<Page<InterfaceInfoMasked>> querySelf(@RequestBody(required = false) PageRequest pageRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解要求不为空
@@ -199,7 +209,8 @@ public class InterfaceInfoController {
 
     //用户通过introduction查询别的接口
     @PostMapping("/queryOthers")
-    public BaseResponse<Page<InterfaceInfoMasked>> queryOthers(@RequestBody InterfaceQueryOthersRequest queryOthersRequest) {
+    @Operation(summary = "用户通过introduction近似查询别人发布的接口")
+    public BaseResponse<Page<InterfaceInfoMasked>> queryOthers(@RequestBody @Parameter(description = "接口查询DTO") InterfaceQueryOthersRequest queryOthersRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -230,7 +241,8 @@ public class InterfaceInfoController {
     //管理员添加接口
     @PostMapping("/admin/add")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<InterfaceInfo> adminAddInterface(@RequestBody @Valid InterfaceAddRequest addRequest) {
+    @Operation(summary = "管理员添加接口")
+    public BaseResponse<InterfaceInfo> adminAddInterface(@RequestBody @Valid @Parameter(description = "接口添加DTO") InterfaceAddRequest addRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -250,7 +262,8 @@ public class InterfaceInfoController {
     //管理员删除接口
     @PostMapping("/admin/delete")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<Void> adminDeleteInterface(@RequestBody @Valid DeleteRequest deleteRequest) {
+    @Operation(summary = "管理员删除接口")
+    public BaseResponse<Void> adminDeleteInterface(@RequestBody @Valid @Parameter(description = "接口删除DTO") DeleteRequest deleteRequest) {
         //一、数据校验（已省略，通过Java Bean Validation实现）
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在——@Valid注解要求不为空
@@ -266,7 +279,8 @@ public class InterfaceInfoController {
     //管理员更新接口
     @PostMapping("/admin/update")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<InterfaceInfo> adminUpdateInterface(@RequestBody @Valid InterfaceUpdateRequest updateRequest) {
+    @Operation(summary = "管理员更新接口")
+    public BaseResponse<InterfaceInfo> adminUpdateInterface(@RequestBody @Valid @Parameter(description = "接口更新DTO") InterfaceUpdateRequest updateRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -303,7 +317,8 @@ public class InterfaceInfoController {
     //管理员查询\筛选接口：ByID
     @GetMapping("/admin/query/{id}")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<InterfaceInfo> getInterfaceInfoByID(@PathVariable Long id) {
+    @Operation(summary = "管理员查询接口：ByID")
+    public BaseResponse<InterfaceInfo> getInterfaceInfoByID(@PathVariable @Parameter(description = "接口id") Long id) {
         //一、数据校验
         //1id是否为空——@PathVariable注解要求不为空
 
@@ -315,7 +330,8 @@ public class InterfaceInfoController {
     // isCost、isRestrict、isExceptionHandling
     @PostMapping("/admin/filter")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<Page<InterfaceInfo>> listInterface(@RequestBody @Valid InterfaceQueryRequest queryRequest) {
+    @Operation(summary = "管理员筛选接口")
+    public BaseResponse<Page<InterfaceInfo>> listInterface(@RequestBody @Valid @Parameter(description = "接口筛选DTO") InterfaceQueryRequest queryRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2获得DTO对象分页参数

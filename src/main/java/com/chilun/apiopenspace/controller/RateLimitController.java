@@ -14,8 +14,11 @@ import com.chilun.apiopenspace.model.entity.RateLimitStrategy;
 import com.chilun.apiopenspace.model.entity.User;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.RateLimitStrategyService;
-import com.chilun.apiopenspace.service.RouteService;
 import com.chilun.apiopenspace.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,6 +33,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/rate")
+@Api(tags = "限流策略管理控制器")
 public class RateLimitController {
     @Resource(name = "RateLimitStrategy&RouteService")
     RateLimitStrategyService rateLimitStrategyService;
@@ -42,8 +46,9 @@ public class RateLimitController {
 
 
     @PostMapping("/set")
+    @Operation(summary = "修改接口限流策略")
     public BaseResponse<RateLimitStrategy> setRateLimitStrategy(
-            @RequestBody @Valid RateLimitSetRequest setRequest, HttpServletRequest request) {
+            @RequestBody @Valid @Parameter(description = "接口限流策略修改DTO") RateLimitSetRequest setRequest, HttpServletRequest request) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：属性不可为空
         //2权限校验
@@ -59,8 +64,9 @@ public class RateLimitController {
     }
 
     @PostMapping("/remove")
+    @Operation(summary = "删除接口限流策略")
     public BaseResponse<Void> removeRateLimitStrategy(
-            @RequestBody @Valid DeleteRequest deleteRequest, HttpServletRequest request) {
+            @RequestBody @Valid @Parameter(description = "接口限流策略删除DTO") DeleteRequest deleteRequest, HttpServletRequest request) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：属性不可为空
         //2权限校验
@@ -77,7 +83,8 @@ public class RateLimitController {
     }
 
     @GetMapping("/query/{id}")
-    public BaseResponse<RateLimitStrategy> getRateLimitStrategy(@PathVariable Long id) {
+    @Operation(summary = "查询接口限流策略")
+    public BaseResponse<RateLimitStrategy> getRateLimitStrategy(@PathVariable @Parameter(description = "限流策略id") Long id) {
         //一、参数校验
         //1空值校验：@PathVariable不可为空
         //二、开始查找
@@ -89,8 +96,9 @@ public class RateLimitController {
 
     @PostMapping("/admin/set")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
+    @Operation(summary = "管理员修改接口限流策略")
     public BaseResponse<RateLimitStrategy> adminSetOrChangeRateLimitStrategy(
-            @RequestBody @Valid RateLimitSetRequest setRequest) {
+            @RequestBody @Valid @Parameter(description = "接口限流策略修改DTO") RateLimitSetRequest setRequest) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：参数不可为空
         //2权限校验：AOP实现
@@ -104,8 +112,9 @@ public class RateLimitController {
 
     @PostMapping("/admin/delete")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
+    @Operation(summary = "管理员删除接口限流策略")
     public BaseResponse<InterfaceChargeStrategy> adminDeleteChargeStrategy(
-            @RequestBody @Valid DeleteRequest deleteRequest) {
+            @RequestBody @Valid @Parameter(description = "接口限流策略删除DTO") DeleteRequest deleteRequest) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
         //2参数范围校验：@Valid 实现

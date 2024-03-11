@@ -15,6 +15,10 @@ import com.chilun.apiopenspace.model.entity.User;
 import com.chilun.apiopenspace.service.InterfaceChargeStrategyService;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,6 +32,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/interfaceCharge")
+@Api(tags = "接口计费策略管理控制器")
 public class InterfaceChargeController {
     @Resource
     InterfaceChargeStrategyService chargeStrategyService;
@@ -39,8 +44,9 @@ public class InterfaceChargeController {
     InterfaceInfoService interfaceInfoService;
 
     @PostMapping("/set")
+    @Operation(summary = "设置接口计费策略")
     public BaseResponse<InterfaceChargeStrategy> setInterfaceChargeStrategy(
-            @RequestBody @Valid InterfaceChargeSetRequest setRequest, HttpServletRequest request) {
+            @RequestBody @Valid @Parameter(description = "接口计费策略设置DTO") InterfaceChargeSetRequest setRequest, HttpServletRequest request) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
         ThrowUtils.throwIf(setRequest.getCostType() == CostTypeValue.FIXED_FEE && setRequest.getFixedFee() == null,
@@ -61,8 +67,9 @@ public class InterfaceChargeController {
     }
 
     @PostMapping("/remove")
+    @Operation(summary = "删除接口计费策略")
     public BaseResponse<Void> removeInterfaceChargeStrategy(
-            @RequestBody @Valid DeleteRequest deleteRequest, HttpServletRequest request) {
+            @RequestBody @Valid @Parameter(description = "接口计费策略删除DTO") DeleteRequest deleteRequest, HttpServletRequest request) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
         //2参数范围校验：@Valid 实现
@@ -80,7 +87,8 @@ public class InterfaceChargeController {
     }
 
     @GetMapping("/query/{id}")
-    public BaseResponse<InterfaceChargeStrategy> getInterfaceChargeStrategy(@PathVariable Long id) {
+    @Operation(summary = "查询接口计费策略")
+    public BaseResponse<InterfaceChargeStrategy> getInterfaceChargeStrategy(@PathVariable @Parameter(description = "接口ID") Long id) {
         //一、参数校验
         //1空值校验：@PathVariable不可为空
         //二、开始查找
@@ -92,8 +100,9 @@ public class InterfaceChargeController {
 
     @PostMapping("/admin/set")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
+    @Operation(summary = "管理员修改接口计费策略")
     public BaseResponse<InterfaceChargeStrategy> adminSetOrChangeChargeStrategy(
-            @RequestBody @Valid InterfaceChargeSetRequest setRequest) {
+            @RequestBody @Valid @Parameter(description = "接口计费策略修改DTO") InterfaceChargeSetRequest setRequest) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
         ThrowUtils.throwIf(setRequest.getCostType() == CostTypeValue.FIXED_FEE && setRequest.getFixedFee() == null,
@@ -112,8 +121,9 @@ public class InterfaceChargeController {
 
     @PostMapping("/admin/delete")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
+    @Operation(summary = "管理员删除接口计费策略")
     public BaseResponse<InterfaceChargeStrategy> adminDeleteChargeStrategy(
-            @RequestBody @Valid DeleteRequest deleteRequest) {
+            @RequestBody @Valid @Parameter(description = "接口计费策略删除DTO") DeleteRequest deleteRequest) {
         //一、参数校验
         //1空值校验：@RequestBody不可为空；@Valid：id、type不可为空
         //2参数范围校验：@Valid 实现

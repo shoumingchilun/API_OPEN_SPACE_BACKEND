@@ -1,5 +1,6 @@
 package com.chilun.apiopenspace.model.dto.InterfaceAccess;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import javax.validation.constraints.NotNull;
 
@@ -10,5 +11,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class AccesskeyAbolishRequest {
     @NotNull
+    @Schema(description = "接口访问码")
     private String accesskey;
 }

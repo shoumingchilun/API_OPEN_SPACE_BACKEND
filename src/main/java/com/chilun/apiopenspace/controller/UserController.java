@@ -14,6 +14,10 @@ import com.chilun.apiopenspace.model.dto.DeleteRequest;
 import com.chilun.apiopenspace.model.dto.User.*;
 import com.chilun.apiopenspace.model.entity.User;
 import com.chilun.apiopenspace.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +35,15 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户管理控制器")
 public class UserController {
     @Resource
     UserService userService;
 
     //注册
     @PostMapping("/register")
-    public BaseResponse<Long> userRegister(@RequestBody @Valid UserRegisterRequest registerRequest) {
+    @Operation(summary = "用户注册")
+    public BaseResponse<Long> userRegister(@RequestBody @Valid @Parameter(description="接口注册DTO") UserRegisterRequest registerRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody实现不为空
         //2DTO参数是否异常——@Valid实现不为空、长度校验
@@ -50,7 +56,8 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public BaseResponse<UserMasked> userLogin(@RequestBody @Valid UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    @Operation(summary = "用户登录")
+    public BaseResponse<UserMasked> userLogin(@RequestBody @Valid @Parameter(description="接口登录DTO") UserLoginRequest userLoginRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody实现不为空
         //2DTO参数是否异常——@Valid实现不为空
@@ -63,6 +70,7 @@ public class UserController {
 
     //退出登录
     @PostMapping("/logout")
+    @Operation(summary = "用户退出登录")
     public BaseResponse<Void> userLogout(HttpServletRequest request) {
         //一、实参检验
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR, "退出登录请求为空");
@@ -74,6 +82,7 @@ public class UserController {
 
     //废除账号
     @PostMapping("/abolish")
+    @Operation(summary = "废除账号")
     public BaseResponse<Void> userAbolish(HttpServletRequest request) {
         //一、请求检验，获得脱敏对象
         ThrowUtils.throwIf(request == null, ErrorCode.PARAMS_ERROR, "请求为空");
@@ -88,7 +97,8 @@ public class UserController {
 
     //更改账号信息
     @PostMapping("/update")
-    public BaseResponse<UserMasked> updateSelf(@RequestBody @Valid UserSelfUpdateRequest updateRequest, HttpServletRequest request) {
+    @Operation(summary = "更改账号信息")
+    public BaseResponse<UserMasked> updateSelf(@RequestBody @Valid @Parameter(description="接口更新DTO") UserSelfUpdateRequest updateRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象不为空——@RequestBody注解要求不为空
         //2DTO对象参数长度校验——@Valid接口实现
@@ -132,7 +142,8 @@ public class UserController {
     //管理员添加账号
     @PostMapping("/admin/add")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<User> addUser(@RequestBody @Valid UserAddRequest addRequest) {
+    @Operation(summary = "管理员添加账号")
+    public BaseResponse<User> addUser(@RequestBody @Valid @Parameter(description="接口添加DTO") UserAddRequest addRequest) {
         //一、数据校验（已省略，通过Java Bean Validation实现）
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在
@@ -161,7 +172,8 @@ public class UserController {
     //管理员删除账号
     @PostMapping("/admin/delete")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<Void> deleteUser(@RequestBody @Valid DeleteRequest deleteRequest) {
+    @Operation(summary = "管理员删除账号")
+    public BaseResponse<Void> deleteUser(@RequestBody @Valid @Parameter(description="接口删除DTO") DeleteRequest deleteRequest) {
         //一、数据校验（已省略，通过Java Bean Validation实现）
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在——@Valid注解要求不为空
@@ -177,7 +189,8 @@ public class UserController {
     //管理员更新账号
     @PostMapping("/admin/update")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<User> updateUser(@RequestBody @Valid UserUpdateRequest updateRequest) {
+    @Operation(summary = "管理员更新账号")
+    public BaseResponse<User> updateUser(@RequestBody @Valid @Parameter(description="接口更新DTO") UserUpdateRequest updateRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在——@Valid注解要求不为空
@@ -203,7 +216,8 @@ public class UserController {
     //管理员查询\筛选账号：ByID、ByUsername
     @GetMapping("/admin/query/id/{id}")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<User> getUserByID(@PathVariable Long id) {
+    @Operation(summary = "管理员查询账号：ByID")
+    public BaseResponse<User> getUserByID(@PathVariable @Parameter(description="用户ID") Long id) {
         //一、数据校验
         //1id是否为空——@PathVariable注解要求不为空
 
@@ -213,7 +227,8 @@ public class UserController {
 
     @GetMapping("/admin/query/username/{username}")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<User> getUserByUsername(@PathVariable String username) {
+    @Operation(summary = "管理员查询账号：ByUsername")
+    public BaseResponse<User> getUserByUsername(@PathVariable @Parameter(description="用户账户") String username) {
         //一、数据校验
         //1username是否为空——@PathVariable注解要求不为空
 
@@ -227,7 +242,8 @@ public class UserController {
     //管理员查询\筛选账号：（all）、likeNickname、likeIntroduce、inRole、inStatus、ge/leTotalBalance
     @PostMapping("/admin/filter")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<Page<User>> listUser(@RequestBody @Valid UserQueryRequest queryRequest) {
+    @Operation(summary = "管理员筛选账号")
+    public BaseResponse<Page<User>> listUser(@RequestBody @Valid @Parameter(description="接口查询DTO") UserQueryRequest queryRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2获得DTO对象分页参数

@@ -1,7 +1,6 @@
 package com.chilun.apiopenspace.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chilun.apiopenspace.Utils.CryptographicUtils;
 import com.chilun.apiopenspace.Utils.ResultUtils;
@@ -20,6 +19,10 @@ import com.chilun.apiopenspace.service.InterfaceAccessService;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +43,7 @@ import java.util.Objects;
 @Slf4j
 @RestController
 @RequestMapping("/interfaceAccess")
+@Api(tags = "接口访问管理控制器")
 public class InterfaceAccessController {
     @Resource
     InterfaceAccessService interfaceAccessService;
@@ -53,7 +57,8 @@ public class InterfaceAccessController {
     //****************服务层接口*****************
     //申请接口
     @PostMapping("/apply")
-    public BaseResponse<InterfaceAccess> interfaceApply(@RequestBody @Valid InterfaceApplyRequest applyRequest,
+    @Operation(summary = "申请接口访问码的接口")
+    public BaseResponse<InterfaceAccess> interfaceApply(@RequestBody @Valid @Parameter(description = "接口申请DTO") InterfaceApplyRequest applyRequest,
                                                         HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
@@ -72,7 +77,8 @@ public class InterfaceAccessController {
 
     //撤销申请
     @PostMapping("/abolish")
-    public BaseResponse<Void> accesskeyAbolish(@RequestBody @Valid AccesskeyAbolishRequest abolishRequest
+    @Operation(summary = "撤销接口访问码")
+    public BaseResponse<Void> accesskeyAbolish(@RequestBody @Valid @Parameter(description = "撤销申请DTO") AccesskeyAbolishRequest abolishRequest
             , HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
@@ -98,7 +104,8 @@ public class InterfaceAccessController {
 
     //切换验证方式（强校验/弱校验）
     @PostMapping("/changeVerify")
-    public BaseResponse<InterfaceAccessMasked> changeVerifyType(@RequestBody @Valid ChangeVerifyRequest changeRequest,
+    @Operation(summary = "切换接口访问码对应的验证方式")
+    public BaseResponse<InterfaceAccessMasked> changeVerifyType(@RequestBody @Valid @Parameter(description = "切换验证方式DTO") ChangeVerifyRequest changeRequest,
                                                                 HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
@@ -125,7 +132,8 @@ public class InterfaceAccessController {
     //**************************用户自身查改***************************
     //用户查自己的申请的接口
     @PostMapping("/querySelf")
-    public BaseResponse<Page<InterfaceAccessMasked>> querySelf(@RequestBody(required = false) PageRequest pageRequest, HttpServletRequest request) {
+    @Operation(summary = "用户查自己的申请过的接口的所有访问码")
+    public BaseResponse<Page<InterfaceAccessMasked>> querySelf(@RequestBody(required = false) @Parameter(description = "分页参数") PageRequest pageRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——可为空
         //2获得DTO对象分页参数
@@ -163,7 +171,8 @@ public class InterfaceAccessController {
 
     //充钱接口（简单实现）
     @PostMapping("/charge")
-    public BaseResponse<InterfaceAccessMasked> topUp(@RequestBody @Valid TopUpRequest topUpRequest) {
+    @Operation(summary = "直接加余额（测试用）")
+    public BaseResponse<InterfaceAccessMasked> topUp(@RequestBody @Valid @Parameter(description = "充钱DTO") TopUpRequest topUpRequest) {
         String accesskey = topUpRequest.getAccesskey();
         InterfaceAccess interfaceAccess = interfaceAccessService.getOne(new QueryWrapper<InterfaceAccess>().eq("accesskey", accesskey));
         ThrowUtils.throwIf(interfaceAccess == null, ErrorCode.PARAMS_ERROR, "申请不存在！");
@@ -178,7 +187,8 @@ public class InterfaceAccessController {
     //管理员添加接口申请
     @PostMapping("/admin/add")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<InterfaceAccess> adminAddInterfaceAccess(@RequestBody @Valid AccesskeyAddRequest addRequest) {
+    @Operation(summary = "管理员添加接口访问码")
+    public BaseResponse<InterfaceAccess> adminAddInterfaceAccess(@RequestBody @Valid @Parameter(description = "管理员添加接口访问码DTO") AccesskeyAddRequest addRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -200,7 +210,8 @@ public class InterfaceAccessController {
     //管理员删除接口申请
     @PostMapping("/admin/delete")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<Void> adminDeleteAccessKey(@RequestBody @Valid AccesskeyAbolishRequest deleteRequest) {
+    @Operation(summary = "管理员删除接口访问码")
+    public BaseResponse<Void> adminDeleteAccessKey(@RequestBody @Valid @Parameter(description = "管理员删除接口访问码DTO") AccesskeyAbolishRequest deleteRequest) {
         //一、数据校验（已省略，通过Java Bean Validation实现）
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2DTO参数是否异常：必要参数是否存在——@Valid注解要求不为空
@@ -216,7 +227,8 @@ public class InterfaceAccessController {
     //管理员更新接口申请
     @PostMapping("/admin/update")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<InterfaceAccess> adminUpdateInterfaceAccess(@RequestBody @Valid AccesskeyUpdateRequest updateRequest) {
+    @Operation(summary = "管理员更新接口访问码")
+    public BaseResponse<InterfaceAccess> adminUpdateInterfaceAccess(@RequestBody @Valid @Parameter(description = "管理员更新接口访问码DTO") AccesskeyUpdateRequest updateRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解实现
         //2DTO参数是否异常（null/长度/数值）——@Valid注解实现
@@ -250,7 +262,8 @@ public class InterfaceAccessController {
     //管理员查询\筛选接口：ByAccesskey
     @GetMapping("/admin/query/{accesskey}")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<InterfaceAccess> getInterfaceAccessByID(@PathVariable String accesskey) {
+    @Operation(summary = "管理员查询接口访问码：ByAccesskey")
+    public BaseResponse<InterfaceAccess> getInterfaceAccessByID(@PathVariable @Parameter(description = "接口访问码") String accesskey) {
         //一、数据校验
         //1id是否为空——@PathVariable注解要求不为空
 
@@ -262,7 +275,8 @@ public class InterfaceAccessController {
     // isCost、isRestrict、isExceptionHandling
     @PostMapping("/admin/filter")
     @UserAuthCheck(mustRole = UserRoleValue.ADMIN)
-    public BaseResponse<Page<InterfaceAccess>> listInterfaceAccess(@RequestBody @Valid AccesskeyQueryRequest queryRequest) {
+    @Operation(summary = "管理员筛选接口访问码")
+    public BaseResponse<Page<InterfaceAccess>> listInterfaceAccess(@RequestBody @Valid @Parameter(description = "管理员筛选接口访问码DTO") AccesskeyQueryRequest queryRequest) {
         //一、数据校验
         //1DTO对象是否为空——@RequestBody注解要求不为空
         //2获得DTO对象分页参数
@@ -288,7 +302,8 @@ public class InterfaceAccessController {
 
     @GetMapping("/gateway/query/{accesskey}")
     @GatewayIPCheck
-    public BaseResponse<String> getCryptographicInterfaceAccess(@PathVariable("accesskey") String accesskey) throws Exception {
+    @Operation(summary = "网关远程调用，获得接口访问码相关信息（加密）")
+    public BaseResponse<String> getCryptographicInterfaceAccess(@PathVariable("accesskey") @Parameter(description = "接口访问码") String accesskey) throws Exception {
         //一、数据校验
         //1DTO对象是否为空——@PathVariable注解要求不为空
 

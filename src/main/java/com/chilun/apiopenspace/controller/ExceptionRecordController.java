@@ -16,6 +16,10 @@ import com.chilun.apiopenspace.service.ExceptionRecordService;
 import com.chilun.apiopenspace.service.InterfaceAccessService;
 import com.chilun.apiopenspace.service.InterfaceInfoService;
 import com.chilun.apiopenspace.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,6 +35,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/exceptionRecord")
+@Api(tags = "异常记录管理控制器")
 public class ExceptionRecordController {
     @Resource
     private UserService userService;
@@ -45,7 +50,8 @@ public class ExceptionRecordController {
     private InterfaceAccessService interfaceAccessService;
 
     @PostMapping("/querySelf")
-    public BaseResponse<Page<ExceptionRecordMasked>> querySelf(@RequestBody(required = false) PageRequest pageRequest, HttpServletRequest request) {
+    @Operation(summary = "用户查询自身的异常访问记录")
+    public BaseResponse<Page<ExceptionRecordMasked>> querySelf(@RequestBody(required = false) @Parameter(description = "分页参数") PageRequest pageRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——可为空
         //2获得DTO对象分页参数
@@ -80,8 +86,9 @@ public class ExceptionRecordController {
     }
 
     @PostMapping("/query/interface/{interfaceId}")
-    public BaseResponse<Page<ExceptionRecordMasked>> queryByInterfaceId(@PathVariable(name = "interfaceId") Long interfaceId,
-                                                                        @RequestBody(required = false) PageRequest pageRequest, HttpServletRequest request) {
+    @Operation(summary = "根据接口ID查询异常记录")
+    public BaseResponse<Page<ExceptionRecordMasked>> queryByInterfaceId(@PathVariable(name = "interfaceId") @Parameter(description = "接口ID") Long interfaceId,
+                                                                        @RequestBody(required = false) @Parameter(description = "分页参数") PageRequest pageRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@PathVariable实现不为空
         //2获得DTO对象分页参数
@@ -119,8 +126,9 @@ public class ExceptionRecordController {
     }
 
     @PostMapping("/query/accesskey/{accesskey}")
-    public BaseResponse<Page<ExceptionRecordMasked>> queryByInterfaceId(@PathVariable(name = "accesskey") String accesskey,
-                                                                        @RequestBody(required = false) PageRequest pageRequest, HttpServletRequest request) {
+    @Operation(summary = "根据接口访问码查询异常记录")
+    public BaseResponse<Page<ExceptionRecordMasked>> queryByInterfaceId(@PathVariable(name = "accesskey") @Parameter(description = "接口访问码") String accesskey,
+                                                                        @RequestBody(required = false) @Parameter(description = "分页参数") PageRequest pageRequest, HttpServletRequest request) {
         //一、数据校验
         //1DTO对象是否为空——@PathVariable实现不为空
         //2获得DTO对象分页参数

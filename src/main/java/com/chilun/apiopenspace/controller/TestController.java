@@ -1,21 +1,18 @@
 package com.chilun.apiopenspace.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chilun.apiopenspace.service.feign.FeignRouteService;
 import com.chilun.apiopenspace.model.dto.DeleteRequest;
 import com.chilun.apiopenspace.model.dto.Route.InitRouteRequest;
 import com.chilun.apiopenspace.model.dto.Route.SaveOrUpdateRouteRequest;
-import com.chilun.apiopenspace.model.entity.InterfaceInfo;
-import com.chilun.apiopenspace.service.InterfaceInfoService;
-import com.chilun.apiopenspace.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author 齿轮
@@ -23,16 +20,19 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/test")
+@Api(tags = "仅测试，请勿调用")
 public class TestController {
     @Resource
     FeignRouteService routeService;
 
     @GetMapping("/base")
+    @Operation(summary = "测试项目是否启动")
     public String testBase() {
         return "hello API_OPEN_SPACE！！！";
     }
 
     @GetMapping("/route")
+    @Operation(summary = "测试路由服务")
     public String testRoute() {
         SaveOrUpdateRouteRequest saveOrUpdateRouteRequest = new SaveOrUpdateRouteRequest();
         saveOrUpdateRouteRequest.setId("1");
