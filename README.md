@@ -3,11 +3,12 @@
 ![](readme/架构设计.png)
 
 项目运行需要：
-1. 开启redis
-2. 开启canal
-3. 开启nacos
-4. 开启RocketMQ
-5. 开启5个微服务，以正常测试
+1. 开启mysql
+2. 开启redis
+3. 开启canal
+4. 开启nacos
+5. 开启RocketMQ
+6. 开启5个微服务，以正常测试
    1. 后端：[后端仓库](https://github.com/shoumingchilun/API_OPEN_SPACE_BACKEND)
    2. 网关：[网关仓库](https://github.com/shoumingchilun/API_OPEN_SPACE_GATEWAY)
    3. Canal Client：[Canal Client仓库](https://github.com/shoumingchilun/API_OPEN_SPACE_CANAL)
@@ -16,6 +17,14 @@
       2. [模拟接口_ip接口](https://github.com/shoumingchilun/IPInterface)
    5. 接口调用端：请自行搭建。
       1. 相关Starter：[客户端SDK仓库](https://github.com/shoumingchilun/API_OPEN_SPACE_STARTER)
+
+使用流程：
+1. 注册
+2. 登录
+3. 使用接口信息管理控制器发布接口
+4. 使用路由管理控制器刷新路由
+5. 使用接口访问管理控制器申请对应接口
+6. 调用Starter发送请求至http://网关域名/api/接口id
 
 项目简介：
 基于Spring Boot+Gateway+Redis+RocketMQ的接口托管平台。
