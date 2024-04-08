@@ -189,7 +189,7 @@ CREATE TABLE `interface_access`  (
   `secretkey` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '密钥',
   `remaining_amount` decimal(10, 2) NOT NULL DEFAULT 0.00 COMMENT '剩余金额',
   `cost` decimal(12, 8) NOT NULL DEFAULT 0.00000000 COMMENT '单次调用价格',
-  `expiration` datetime(0) NOT NULL DEFAULT '(now() + interval 3 year)' COMMENT '过期时间',
+  `expiration` datetime(0) NOT NULL DEFAULT (now() + interval 3 year) COMMENT '过期时间',
   `interface_id` bigint NOT NULL COMMENT '接口id',
   `userid` bigint NOT NULL COMMENT '所属用户id',
   `call_times` int NOT NULL DEFAULT 0 COMMENT '总调用次数',

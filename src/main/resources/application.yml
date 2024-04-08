@@ -24,7 +24,7 @@ message-queue-meta:
   topic: API_SPACE_LOG
   common-log-tag: commonlog
   error-log-tag: errorlog
-  proxy-server: 192.168.146.132:8081 # 服务代理访问地址
+  proxy-server: 192.168.146.132:8080 # 服务代理访问地址
 cryptographic:
   AESKey: hello
 logging:

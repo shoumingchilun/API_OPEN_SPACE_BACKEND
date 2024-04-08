@@ -63,7 +63,7 @@ public class RateLimitStrategyServiceImpl extends ServiceImpl<RateLimitStrategyM
         ThrowUtils.throwIf(interfaceInfo == null, ErrorCode.PARAMS_ERROR, "指定接口不存在！");
 
         //二、删除策略
-        if (interfaceInfo.getIsCost() == 1) {
+        if (interfaceInfo.getIsRestrict() == 1) {
             interfaceInfo.setIsRestrict(0);
             boolean b = interfaceInfoService.updateById(interfaceInfo);
             ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR, "关闭接口限制失败！");
